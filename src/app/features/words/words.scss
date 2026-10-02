@@ -1,0 +1,97 @@
+.words-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.words-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.count {
+  color: var(--color-text-muted);
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.search-field {
+  flex: 1 1 240px;
+}
+
+.empty-state {
+  color: var(--color-text-muted);
+  padding: 32px 0;
+  text-align: center;
+}
+
+.word-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.word-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.word-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.word-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.german {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.english {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.word-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: none;
+}
+
+.level-badge {
+  padding: 4px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-right: 4px;
+}
+
+.add-fab {
+  position: fixed;
+  right: 16px;
+  // Clears the shell's mobile bottom tab bar (measured ~64px tall), plus a
+  // 16px gap - both terms are on the approved spacing scale.
+  bottom: calc(64px + 16px);
+}

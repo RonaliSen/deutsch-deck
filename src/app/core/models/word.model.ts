@@ -15,3 +15,6 @@ export interface Word {
   dueAt: number;
   createdAt: number;
 }
+
+/** Fields a user actually fills in. box/dueAt/createdAt are system-assigned. */
+export type WordInput = Omit<Word, 'id' | 'box' | 'dueAt' | 'createdAt'>;

@@ -1,0 +1,65 @@
+<header class="words-header">
+  <div class="words-heading">
+    <h1>My words</h1>
+    <p class="count">{{ wordsStore.filteredWords().length }} {{ wordsStore.filteredWords().length === 1 ? 'word' : 'words' }}</p>
+  </div>
+
+  @if (isDesktop()) {
+    <button mat-flat-button type="button" (click)="onAdd()">
+      <mat-icon>add</mat-icon>
+      Add word
+    </button>
+  }
+</header>
+
+<div class="controls">
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>Search</mat-label>
+    <mat-icon matPrefix>search</mat-icon>
+    <input matInput [value]="searchText()" (input)="onSearchInput($event)" placeholder="German or English" />
+  </mat-form-field>
+
+  <mat-chip-listbox aria-label="Filter by level">
+    @for (level of levelChips; track level) {
+      <mat-chip-option [selected]="wordsStore.levelFilter() === level" (click)="onLevelChipChange(level)">
+        {{ level === 'all' ? 'All' : level }}
+      </mat-chip-option>
+    }
+  </mat-chip-listbox>
+</div>
+
+@if (wordsStore.filteredWords().length === 0) {
+  <p class="empty-state">No words found</p>
+} @else {
+  <ul class="word-list">
+    @for (word of wordsStore.filteredWords(); track word.id) {
+      <li class="word-row">
+        <div class="word-main">
+          @if (word.gender) {
+            <app-article-badge [gender]="word.gender" />
+          }
+          <div class="word-text">
+            <span class="german">{{ word.german }}</span>
+            <span class="english">{{ word.english }}</span>
+          </div>
+        </div>
+
+        <div class="word-actions">
+          <span class="level-badge">{{ word.level }}</span>
+          <button mat-icon-button type="button" [attr.aria-label]="'Edit ' + word.german" (click)="onEdit(word)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button type="button" [attr.aria-label]="'Delete ' + word.german" (click)="onDelete(word)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </li>
+    }
+  </ul>
+}
+
+@if (!isDesktop()) {
+  <button mat-fab type="button" class="add-fab" aria-label="Add word" (click)="onAdd()">
+    <mat-icon>add</mat-icon>
+  </button>
+}

@@ -1,12 +1,8 @@
-import { BreakpointObserver } from '@angular/cdk/layout';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { map } from 'rxjs';
+import { injectIsDesktop } from '../core/layout/breakpoints';
 import { ThemeToggle } from '../shared/theme-toggle/theme-toggle';
-
-const DESKTOP_QUERY = '(min-width: 768px)';
 
 interface NavItem {
   path: string;
@@ -30,13 +26,5 @@ const NAV_ITEMS: readonly NavItem[] = [
 })
 export class Shell {
   protected readonly navItems = NAV_ITEMS;
-
-  // No SSR, so reading matchMedia synchronously for the initial value is
-  // safe and avoids a layout flash while the observable's first value lands.
-  protected readonly isDesktop = toSignal(
-    inject(BreakpointObserver)
-      .observe(DESKTOP_QUERY)
-      .pipe(map((state) => state.matches)),
-    { initialValue: window.matchMedia(DESKTOP_QUERY).matches },
-  );
+  protected readonly isDesktop = injectIsDesktop();
 }
