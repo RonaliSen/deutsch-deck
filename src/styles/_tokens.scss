@@ -1,0 +1,29 @@
+// Design tokens as CSS custom properties.
+// Light values live on :root (the default). Dark values override them when
+// the ThemeStore (milestone 1, step 3) puts data-theme="dark" on <html>.
+//
+// der/die/das colors stay the same in both modes - they're already vivid
+// enough to read on both light and dark backgrounds.
+:root {
+  --color-bg: #fafaf9;
+  --color-surface: #ffffff;
+  --color-text: #1c1917;
+  --color-text-muted: #78716c;
+  --color-border: #e7e5e4;
+  --color-accent: #f97316;
+  --color-accent-hover: #ea580c;
+
+  --color-der: #3b82f6;
+  --color-die: #ef4444;
+  --color-das: #22c55e;
+}
+
+[data-theme='dark'] {
+  --color-bg: #1c1917;
+  --color-surface: #292524;
+  --color-text: #faf9f9;
+  --color-text-muted: #a8a29e;
+  --color-border: #44403c;
+  --color-accent: #fb923c;
+  --color-accent-hover: #f97316;
+}

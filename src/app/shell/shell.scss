@@ -1,0 +1,131 @@
+.shell {
+  min-height: 100vh;
+}
+
+.shell-body {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+}
+
+.content {
+  width: 100%;
+  max-width: 960px;
+  box-sizing: border-box;
+}
+
+// Shared nav-link look, used by both the desktop sidebar and the mobile
+// bottom tabs.
+a {
+  color: var(--color-text-muted);
+  text-decoration: none;
+  font-weight: 500;
+
+  &.active {
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+}
+
+// --- Desktop: fixed sidebar + centered content ---
+
+.shell--desktop {
+  display: flex;
+  flex-direction: row;
+
+  .sidebar {
+    flex: none;
+    width: 240px;
+    display: flex;
+    flex-direction: column;
+    padding: 24px 16px;
+    border-right: 1px solid var(--color-border);
+    background: var(--color-surface);
+  }
+
+  .logo {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text);
+    padding: 0 8px;
+    margin-bottom: 32px;
+  }
+
+  nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  nav a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 8px;
+
+    &.active {
+      background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+    }
+
+    &:hover {
+      background: var(--color-bg);
+    }
+  }
+
+  .sidebar-theme-toggle {
+    margin-top: auto;
+  }
+
+  .shell-body {
+    padding: 32px 24px;
+  }
+}
+
+// --- Mobile: slim top bar + bottom tab bar ---
+
+.shell--mobile {
+  display: flex;
+  flex-direction: column;
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 48px;
+    padding: 0 16px;
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .app-name {
+    font-weight: 700;
+    color: var(--color-text);
+  }
+
+  .shell-body {
+    padding: 16px;
+  }
+
+  .bottom-tabs {
+    position: sticky;
+    bottom: 0;
+    display: flex;
+    background: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .bottom-tabs a {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 4px 12px;
+    font-size: 0.75rem;
+  }
+}

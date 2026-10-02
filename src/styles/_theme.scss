@@ -1,0 +1,35 @@
+// Material 3 theme built on Material's orange tonal palette.
+// Angular Material's mat.theme() doesn't yet switch light/dark on its own
+// (the `color-scheme` theme-type exists in config validation but isn't
+// wired up in this version), so we emit the theme twice: once for :root
+// (light) and once scoped under [data-theme="dark"]. The attribute
+// selector wins over :root by specificity, so it overrides cleanly.
+@use '@angular/material' as mat;
+
+@mixin light() {
+  @include mat.theme(
+    (
+      color: (
+        theme-type: light,
+        primary: mat.$orange-palette,
+        tertiary: mat.$blue-palette,
+      ),
+      typography: 'Inter, system-ui, sans-serif',
+      density: 0,
+    )
+  );
+}
+
+@mixin dark() {
+  @include mat.theme(
+    (
+      color: (
+        theme-type: dark,
+        primary: mat.$orange-palette,
+        tertiary: mat.$blue-palette,
+      ),
+      typography: 'Inter, system-ui, sans-serif',
+      density: 0,
+    )
+  );
+}
