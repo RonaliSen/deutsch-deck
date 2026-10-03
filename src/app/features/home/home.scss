@@ -1,0 +1,185 @@
+.greeting {
+  margin-bottom: 24px;
+}
+
+.date {
+  color: var(--color-text-muted);
+}
+
+.first-run {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  padding: 48px 0;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .card-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.card {
+  padding: 24px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface);
+}
+
+.card h2 {
+  margin: 0 0 16px;
+  font-size: 1rem;
+}
+
+// --- Hero card ---
+
+.hero-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.hero-count {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.hero-cta {
+  font-size: 1rem;
+  padding: 0 32px;
+}
+
+// --- Streak card ---
+
+.streak-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.flame {
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+  color: var(--color-accent);
+
+  &.muted {
+    color: var(--color-text-muted);
+  }
+}
+
+.streak-count {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.streak-message {
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+// --- Level progress card ---
+
+.level-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.level-label {
+  flex: none;
+  width: 24px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+mat-progress-bar {
+  flex: 1;
+}
+
+.level-text {
+  flex: none;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+// --- Recent activity card ---
+
+.activity-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.activity-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--color-border);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.activity-date {
+  flex: 1;
+  color: var(--color-text);
+}
+
+.activity-score {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+.muted {
+  color: var(--color-text-muted);
+}
+
+// --- Loading skeleton ---
+
+.skeleton {
+  height: 140px;
+  background: var(--color-border);
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+    opacity: 0.7;
+  }
+}
