@@ -55,7 +55,12 @@ export class Words {
 
   protected onAdd(): void {
     this.dialog
-      .open(WordDialog, { width: '480px', ariaModal: true })
+      .open(WordDialog, {
+        width: '480px',
+        ariaModal: true,
+        panelClass: 'word-dialog-panel',
+        backdropClass: 'word-dialog-backdrop',
+      })
       .afterClosed()
       .subscribe((result) => {
         if (result) {
@@ -66,7 +71,13 @@ export class Words {
 
   protected onEdit(word: Word): void {
     this.dialog
-      .open(WordDialog, { data: { word }, width: '480px', ariaModal: true })
+      .open(WordDialog, {
+        data: { word },
+        width: '480px',
+        ariaModal: true,
+        panelClass: 'word-dialog-panel',
+        backdropClass: 'word-dialog-backdrop',
+      })
       .afterClosed()
       .subscribe((result) => {
         if (result) {

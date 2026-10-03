@@ -1,5 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  NonNullableFormBuilder,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -14,7 +20,15 @@ export interface WordDialogData {
 
 const LEVELS: readonly Level[] = ['A1', 'A2', 'B1'];
 const GENDERS: readonly Gender[] = ['der', 'die', 'das'];
-const TOPIC_SUGGESTIONS: readonly string[] = ['food', 'work', 'travel', 'home', 'family', 'other'];
+const TOPICS: readonly string[] = ['food', 'home', 'family', 'work', 'travel', 'animals', 'school', 'other'];
+
+// Case-insensitive membership check - the control still holds whatever case
+// the user typed (so the autocomplete can keep matching), only save()
+// lowercases it before it reaches the store.
+function topicValidator(control: AbstractControl<string>): ValidationErrors | null {
+  const value = control.value.trim().toLowerCase();
+  return !value || TOPICS.includes(value) ? null : { invalidTopic: true };
+}
 
 @Component({
   selector: 'app-word-dialog',
@@ -40,20 +54,20 @@ export class WordDialog {
   protected readonly levels = LEVELS;
   protected readonly genders = GENDERS;
 
-  protected readonly filteredTopics = signal<readonly string[]>(TOPIC_SUGGESTIONS);
+  protected readonly filteredTopics = signal<readonly string[]>(TOPICS);
 
   protected readonly form = this.fb.group({
-    german: this.fb.control(this.data.word?.german ?? '', Validators.required),
     gender: this.fb.control<Gender | ''>(this.data.word?.gender ?? ''),
+    german: this.fb.control(this.data.word?.german ?? '', Validators.required),
     plural: this.fb.control(this.data.word?.plural ?? ''),
     english: this.fb.control(this.data.word?.english ?? '', Validators.required),
     level: this.fb.control<Level>(this.data.word?.level ?? 'A1', Validators.required),
-    topic: this.fb.control(this.data.word?.topic ?? '', Validators.required),
+    topic: this.fb.control(this.data.word?.topic ?? '', [Validators.required, topicValidator]),
   });
 
   protected onTopicInput(event: Event): void {
     const term = (event.target as HTMLInputElement).value.toLowerCase();
-    this.filteredTopics.set(TOPIC_SUGGESTIONS.filter((topic) => topic.includes(term)));
+    this.filteredTopics.set(TOPICS.filter((topic) => topic.includes(term)));
   }
 
   protected save(): void {
@@ -68,7 +82,7 @@ export class WordDialog {
       german: raw.german.trim(),
       english: raw.english.trim(),
       level: raw.level,
-      topic: raw.topic.trim(),
+      topic: raw.topic.trim().toLowerCase(),
       ...(raw.gender ? { gender: raw.gender } : {}),
       ...(plural ? { plural } : {}),
     };
