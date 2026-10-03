@@ -1,45 +1,42 @@
 @use '@angular/material' as mat;
 
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  // .mat-mdc-dialog-title already carries its own 24px left/right padding;
+  // move the right side onto this row so the close button isn't double-padded.
+  padding-right: 12px;
+
+  h2[mat-dialog-title] {
+    margin: 0;
+    padding-right: 0;
+  }
+}
+
 .fields {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  min-width: 280px;
+  gap: 16px;
 
   // Same approach as the Study filter's .topic-field: a form-field-only
   // density scope, so nothing outside this dialog is affected.
+  // -2 -> 48px row height.
   @include mat.form-field-density(
     mat.define-theme(
       (
         density: (
-          scale: -4,
+          scale: -2,
         ),
       )
     )
   );
 }
 
-.field-row {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+.fields > mat-form-field {
+  width: 100%;
 }
 
-@media (min-width: 768px) {
-  .field-row {
-    flex-direction: row;
-    gap: 12px;
-  }
-
-  .field-row > mat-form-field {
-    flex: 1 1 0;
-    min-width: 0;
-  }
-
-  // Article is a short der/die/das/None select - German carries the rest
-  // of the row's width. Wide enough for the "Article (nouns only)" label
-  // itself, not just the der/die/das value.
-  .row-article-german > mat-form-field:first-child {
-    flex: 0 0 190px;
-  }
+mat-dialog-actions {
+  padding-top: 24px;
 }

@@ -1,70 +1,69 @@
-<h2 mat-dialog-title>{{ isEdit ? 'Edit word' : 'Add word' }}</h2>
+<div class="header-row">
+  <h2 mat-dialog-title>{{ isEdit ? 'Edit word' : 'Add word' }}</h2>
+  <button mat-icon-button type="button" aria-label="Close" mat-dialog-close>
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
 
 <form [formGroup]="form" (ngSubmit)="save()">
   <mat-dialog-content class="fields">
-    <div class="field-row row-article-german">
-      <mat-form-field appearance="outline" subscriptSizing="dynamic">
-        <mat-label>Article (nouns only)</mat-label>
-        <mat-select formControlName="gender">
-          <mat-option value="">None</mat-option>
-          @for (gender of genders; track gender) {
-            <mat-option [value]="gender" lang="de">{{ gender }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" subscriptSizing="dynamic">
-        <mat-label>German</mat-label>
-        <input matInput formControlName="german" lang="de" required />
-        @if (form.controls.german.invalid && form.controls.german.touched) {
-          <mat-error>German word is required</mat-error>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Article (nouns only)</mat-label>
+      <mat-select formControlName="gender">
+        <mat-option value="">None</mat-option>
+        @for (gender of genders; track gender) {
+          <mat-option [value]="gender" lang="de">{{ gender }}</mat-option>
         }
-      </mat-form-field>
-    </div>
+      </mat-select>
+    </mat-form-field>
 
-    <div class="field-row">
-      <mat-form-field appearance="outline" subscriptSizing="dynamic">
-        <mat-label>Plural (optional)</mat-label>
-        <input matInput formControlName="plural" lang="de" />
-      </mat-form-field>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>German</mat-label>
+      <input matInput formControlName="german" lang="de" required />
+      @if (form.controls.german.invalid && form.controls.german.touched) {
+        <mat-error>German word is required</mat-error>
+      }
+    </mat-form-field>
 
-      <mat-form-field appearance="outline" subscriptSizing="dynamic">
-        <mat-label>English</mat-label>
-        <input matInput formControlName="english" required />
-        @if (form.controls.english.invalid && form.controls.english.touched) {
-          <mat-error>English meaning is required</mat-error>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Plural (optional)</mat-label>
+      <input matInput formControlName="plural" lang="de" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>English</mat-label>
+      <input matInput formControlName="english" required />
+      @if (form.controls.english.invalid && form.controls.english.touched) {
+        <mat-error>English meaning is required</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Level</mat-label>
+      <mat-select formControlName="level" required>
+        @for (level of levels; track level) {
+          <mat-option [value]="level">{{ level }}</mat-option>
         }
-      </mat-form-field>
-    </div>
+      </mat-select>
+      @if (form.controls.level.invalid && form.controls.level.touched) {
+        <mat-error>Level is required</mat-error>
+      }
+    </mat-form-field>
 
-    <div class="field-row">
-      <mat-form-field appearance="outline" subscriptSizing="dynamic">
-        <mat-label>Level</mat-label>
-        <mat-select formControlName="level" required>
-          @for (level of levels; track level) {
-            <mat-option [value]="level">{{ level }}</mat-option>
-          }
-        </mat-select>
-        @if (form.controls.level.invalid && form.controls.level.touched) {
-          <mat-error>Level is required</mat-error>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Topic</mat-label>
+      <input matInput formControlName="topic" required [matAutocomplete]="topicAuto" (input)="onTopicInput($event)" />
+      <mat-autocomplete #topicAuto="matAutocomplete">
+        @for (topic of filteredTopics(); track topic) {
+          <mat-option [value]="topic">{{ topic }}</mat-option>
         }
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" subscriptSizing="dynamic">
-        <mat-label>Topic</mat-label>
-        <input matInput formControlName="topic" required [matAutocomplete]="topicAuto" (input)="onTopicInput($event)" />
-        <mat-autocomplete #topicAuto="matAutocomplete">
-          @for (topic of filteredTopics(); track topic) {
-            <mat-option [value]="topic">{{ topic }}</mat-option>
-          }
-        </mat-autocomplete>
-        @if (form.controls.topic.hasError('required') && form.controls.topic.touched) {
-          <mat-error>Topic is required</mat-error>
-        } @else if (form.controls.topic.hasError('invalidTopic') && form.controls.topic.touched) {
-          <mat-error>Choose a topic from the list</mat-error>
-        }
-      </mat-form-field>
-    </div>
+      </mat-autocomplete>
+      @if (form.controls.topic.hasError('required') && form.controls.topic.touched) {
+        <mat-error>Topic is required</mat-error>
+      } @else if (form.controls.topic.hasError('invalidTopic') && form.controls.topic.touched) {
+        <mat-error>Choose a topic from the list</mat-error>
+      }
+    </mat-form-field>
   </mat-dialog-content>
 
   <mat-dialog-actions align="end">

@@ -56,7 +56,8 @@ export class Words {
   protected onAdd(): void {
     this.dialog
       .open(WordDialog, {
-        width: '480px',
+        width: this.isDesktop() ? '560px' : '100vw',
+        maxWidth: this.isDesktop() ? '90vw' : '100vw',
         ariaModal: true,
         panelClass: 'word-dialog-panel',
         backdropClass: 'word-dialog-backdrop',
@@ -73,7 +74,8 @@ export class Words {
     this.dialog
       .open(WordDialog, {
         data: { word },
-        width: '480px',
+        width: this.isDesktop() ? '560px' : '100vw',
+        maxWidth: this.isDesktop() ? '90vw' : '100vw',
         ariaModal: true,
         panelClass: 'word-dialog-panel',
         backdropClass: 'word-dialog-backdrop',
