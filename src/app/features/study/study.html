@@ -62,7 +62,14 @@
       </div>
 
       @if (session.currentCard(); as card) {
-        <app-flashcard [word]="card" [flipped]="session.isFlipped()" (toggle)="session.flip()" />
+        <!-- Keyed by word id: answering swaps currentCard and resets
+             isFlipped in the same patchState, so without a key Angular
+             would reuse this instance and CSS-transition it from flipped
+             back to unflipped - showing the *new* word's answer mid-flip.
+             Keying forces a fresh, unflipped instance per word instead. -->
+        @for (c of [card]; track c.id) {
+          <app-flashcard [word]="c" [flipped]="session.isFlipped()" (toggle)="session.flip()" />
+        }
       }
 
       @if (session.isFlipped()) {

@@ -21,6 +21,21 @@
   max-width: 360px;
   aspect-ratio: 4 / 3;
   margin: 0 auto;
+  // Study recreates this component per word (keyed by id), so this plays
+  // once on mount for every new card - a quick cue that it's a fresh card,
+  // not a flip-back transition of the old one.
+  animation: card-enter 0.2s ease;
+}
+
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .flashcard {
@@ -90,6 +105,10 @@
 // 3D rotation can trigger vestibular discomfort; swap it for a plain
 // cross-fade when the user has asked the OS to reduce motion.
 @media (prefers-reduced-motion: reduce) {
+  :host {
+    animation: none;
+  }
+
   .flashcard-inner {
     transition: none;
     transform: none !important;

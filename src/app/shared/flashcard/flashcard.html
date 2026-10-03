@@ -1,4 +1,4 @@
-<button type="button" class="flashcard" [class.flipped]="flipped()" [attr.aria-label]="ariaLabel()" (click)="toggle.emit()">
+<button #cardButton type="button" class="flashcard" [class.flipped]="flipped()" [attr.aria-label]="ariaLabel()" (click)="toggle.emit()">
   <span class="sr-only" aria-live="polite">{{ liveText() }}</span>
 
   <div class="flashcard-inner">
