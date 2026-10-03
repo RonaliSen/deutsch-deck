@@ -38,6 +38,11 @@
   list-style: none;
   margin: 0;
   padding: 0;
+  // Clears the mobile add-fab (56px tall, sitting 80px above the viewport
+  // bottom - see .add-fab below) plus a 16px gap, so the last rows' edit/
+  // delete buttons don't scroll underneath it. Harmless extra whitespace
+  // on desktop, where there's no fab.
+  padding-bottom: 152px;
 }
 
 .word-row {

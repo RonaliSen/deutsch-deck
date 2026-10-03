@@ -42,6 +42,17 @@ a {
     padding: 24px 16px;
     border-right: 1px solid var(--color-border);
     background: var(--color-surface);
+
+    // Pin to the viewport instead of stretching to the page's full
+    // (content-driven) height - otherwise a long word list pushes the
+    // theme toggle at the bottom below the fold. overflow-y lets the
+    // nav scroll internally on very short windows rather than clipping it.
+    position: sticky;
+    top: 0;
+    box-sizing: border-box;
+    height: 100vh;
+    height: 100dvh;
+    overflow-y: auto;
   }
 
   .logo {
