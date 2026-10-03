@@ -1,0 +1,86 @@
+@switch (session.status()) {
+  @case ('setup') {
+    <div class="setup">
+      <h1>Study</h1>
+
+      @if (globalDueCount() === 0) {
+        <div class="empty-state">
+          <p>All done for today! Come back tomorrow.</p>
+          <a mat-button routerLink="/words">Go to Words</a>
+        </div>
+      } @else {
+        <div class="filters">
+          <mat-chip-listbox aria-label="Filter by level">
+            @for (level of levelChips; track level) {
+              <mat-chip-option [selected]="setupLevel() === level" (click)="setLevel(level)">
+                {{ level === 'all' ? 'All' : level }}
+              </mat-chip-option>
+            }
+          </mat-chip-listbox>
+
+          <mat-form-field appearance="outline" class="topic-field">
+            <mat-label>Topic</mat-label>
+            <mat-select [value]="setupTopic()" (selectionChange)="setupTopic.set($event.value)">
+              <mat-option value="all">All topics</mat-option>
+              @for (topic of topics(); track topic) {
+                <mat-option [value]="topic">{{ topic }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <p class="due-count">{{ dueWords().length }} word{{ dueWords().length === 1 ? '' : 's' }} due</p>
+
+        <button mat-flat-button type="button" [disabled]="dueWords().length === 0" (click)="startSession()">Start</button>
+
+        @if (dueWords().length === 0) {
+          <p class="muted">No due words match these filters.</p>
+        }
+      }
+    </div>
+  }
+
+  @case ('studying') {
+    <div class="studying">
+      <div class="progress">
+        <mat-progress-bar mode="determinate" [value]="progressPercent()" />
+        <span class="progress-label">{{ session.progress().current }} / {{ session.progress().total }}</span>
+      </div>
+
+      @if (session.currentCard(); as card) {
+        <app-flashcard [word]="card" [flipped]="session.isFlipped()" (toggle)="session.flip()" />
+      }
+
+      @if (session.isFlipped()) {
+        <div class="answer-buttons">
+          <button mat-stroked-button type="button" (click)="session.answer(false)">Didn't know</button>
+          <button mat-flat-button type="button" (click)="session.answer(true)">Knew it</button>
+        </div>
+      }
+    </div>
+  }
+
+  @case ('done') {
+    <div class="done">
+      <h1>Session complete</h1>
+      <p class="summary">{{ knownCount() }} known, {{ missedWords().length }} not known</p>
+
+      @if (missedWords().length > 0) {
+        <h2>Missed words</h2>
+        <ul class="missed-list">
+          @for (word of missedWords(); track word.id) {
+            <li>
+              <span class="german">{{ word.german }}</span>
+              <span class="english">{{ word.english }}</span>
+            </li>
+          }
+        </ul>
+      }
+
+      <div class="done-actions">
+        <button mat-stroked-button type="button" (click)="studyAgain()">Study again</button>
+        <a mat-flat-button routerLink="/">Back to home</a>
+      </div>
+    </div>
+  }
+}

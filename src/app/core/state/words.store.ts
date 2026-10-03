@@ -1,8 +1,9 @@
-import { computed } from '@angular/core';
+import { computed, inject } from '@angular/core';
 import { patchState, signalStore, withComputed, withHooks, withMethods, withState } from '@ngrx/signals';
-import { db } from '../data/db';
+import { DeutschDeckDb } from '../data/db';
 import { seedWordsIfEmpty } from '../data/seed-words';
 import { Level, Word, WordInput } from '../models/word.model';
+import { review } from '../utils/leitner';
 
 export type LevelFilter = 'all' | Level;
 
@@ -57,51 +58,66 @@ export const WordsStore = signalStore(
     }),
     filteredWords: computed(() => filterWords(words(), searchTerm(), levelFilter())),
   })),
-  withMethods((store) => ({
-    setSearchTerm(searchTerm: string): void {
-      patchState(store, { searchTerm });
-    },
+  withMethods((store) => {
+    const db = inject(DeutschDeckDb);
 
-    setLevelFilter(levelFilter: LevelFilter): void {
-      patchState(store, { levelFilter });
-    },
+    return {
+      setSearchTerm(searchTerm: string): void {
+        patchState(store, { searchTerm });
+      },
 
-    async load(): Promise<void> {
-      patchState(store, { loading: true });
-      await seedWordsIfEmpty(db);
-      const words = await db.words.toArray();
-      patchState(store, { words, loading: false });
-    },
+      setLevelFilter(levelFilter: LevelFilter): void {
+        patchState(store, { levelFilter });
+      },
 
-    async addWord(input: WordInput): Promise<Word> {
-      const now = Date.now();
-      const word: Omit<Word, 'id'> = { ...input, box: 1, dueAt: now, createdAt: now };
-      const id = await db.words.add(word as Word);
-      const saved: Word = { ...word, id };
-      patchState(store, { words: [...store.words(), saved] });
-      return saved;
-    },
+      async load(): Promise<void> {
+        patchState(store, { loading: true });
+        await seedWordsIfEmpty(db);
+        const words = await db.words.toArray();
+        patchState(store, { words, loading: false });
+      },
 
-    // Editing word info only - box/dueAt (review progress) are untouched.
-    async updateWord(id: number, changes: Partial<WordInput>): Promise<void> {
-      await db.words.update(id, changes);
-      patchState(store, {
-        words: store.words().map((word) => (word.id === id ? { ...word, ...changes } : word)),
-      });
-    },
+      async addWord(input: WordInput): Promise<Word> {
+        const now = Date.now();
+        const word: Omit<Word, 'id'> = { ...input, box: 1, dueAt: now, createdAt: now };
+        const id = await db.words.add(word as Word);
+        const saved: Word = { ...word, id };
+        patchState(store, { words: [...store.words(), saved] });
+        return saved;
+      },
 
-    async deleteWord(id: number): Promise<void> {
-      await db.words.delete(id);
-      patchState(store, { words: store.words().filter((word) => word.id !== id) });
-    },
+      // Editing word info only - box/dueAt (review progress) are untouched.
+      async updateWord(id: number, changes: Partial<WordInput>): Promise<void> {
+        await db.words.update(id, changes);
+        patchState(store, {
+          words: store.words().map((word) => (word.id === id ? { ...word, ...changes } : word)),
+        });
+      },
 
-    // For "Undo" after a delete: puts the exact word back, same id and
-    // review progress, as opposed to addWord's box 1/dueAt now reset.
-    async restoreWord(word: Word): Promise<void> {
-      await db.words.add(word);
-      patchState(store, { words: [...store.words(), word] });
-    },
-  })),
+      async deleteWord(id: number): Promise<void> {
+        await db.words.delete(id);
+        patchState(store, { words: store.words().filter((word) => word.id !== id) });
+      },
+
+      // For "Undo" after a delete: puts the exact word back, same id and
+      // review progress, as opposed to addWord's box 1/dueAt now reset.
+      async restoreWord(word: Word): Promise<void> {
+        await db.words.add(word);
+        patchState(store, { words: [...store.words(), word] });
+      },
+
+      // Applies one Leitner review (see core/utils/leitner.ts) and persists it.
+      async reviewWord(id: number, knewIt: boolean): Promise<void> {
+        const word = store.words().find((w) => w.id === id);
+        if (!word) {
+          return;
+        }
+        const updated = review(word, knewIt, Date.now());
+        await db.words.update(id, { box: updated.box, dueAt: updated.dueAt });
+        patchState(store, { words: store.words().map((w) => (w.id === id ? updated : w)) });
+      },
+    };
+  }),
   withHooks({
     onInit(store) {
       store.load();

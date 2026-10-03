@@ -1,0 +1,19 @@
+<button type="button" class="flashcard" [class.flipped]="flipped()" [attr.aria-label]="ariaLabel()" (click)="toggle.emit()">
+  <span class="sr-only" aria-live="polite">{{ liveText() }}</span>
+
+  <div class="flashcard-inner">
+    <div class="flashcard-face flashcard-front">
+      @if (word().gender) {
+        <app-article-badge [gender]="word().gender!" />
+      }
+      <span class="german">{{ word().german }}</span>
+    </div>
+
+    <div class="flashcard-face flashcard-back">
+      <span class="english">{{ word().english }}</span>
+      @if (word().plural) {
+        <span class="plural">Plural: {{ word().plural }}</span>
+      }
+    </div>
+  </div>
+</button>

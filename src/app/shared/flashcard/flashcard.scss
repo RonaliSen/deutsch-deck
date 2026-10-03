@@ -1,0 +1,115 @@
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// Angular gives <app-flashcard> no default display, so inside a flex
+// container (align-items: center, not stretch) it shrinks to content size
+// instead of taking the width .flashcard's `width: 100%` expects - the
+// card collapses to 0x0. Resolving width/aspect-ratio here, on the host
+// itself, fixes that at the source.
+:host {
+  display: block;
+  width: 100%;
+  max-width: 360px;
+  aspect-ratio: 4 / 3;
+  margin: 0 auto;
+}
+
+.flashcard {
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  perspective: 1000px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.flashcard-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.5s ease;
+  transform-style: preserve-3d;
+}
+
+.flashcard.flipped .flashcard-inner {
+  transform: rotateY(180deg);
+}
+
+.flashcard-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 32px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  backface-visibility: hidden;
+  box-sizing: border-box;
+}
+
+.flashcard-back {
+  transform: rotateY(180deg);
+}
+
+.german {
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--color-text);
+  text-align: center;
+}
+
+.english {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--color-text);
+  text-align: center;
+}
+
+.plural {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+// 3D rotation can trigger vestibular discomfort; swap it for a plain
+// cross-fade when the user has asked the OS to reduce motion.
+@media (prefers-reduced-motion: reduce) {
+  .flashcard-inner {
+    transition: none;
+    transform: none !important;
+  }
+
+  .flashcard-face {
+    transition: opacity 0.2s ease;
+    transform: none;
+    opacity: 0;
+  }
+
+  .flashcard-front {
+    opacity: 1;
+  }
+
+  .flashcard.flipped .flashcard-front {
+    opacity: 0;
+  }
+
+  .flashcard.flipped .flashcard-back {
+    opacity: 1;
+  }
+}
