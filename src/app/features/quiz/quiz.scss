@@ -1,0 +1,192 @@
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.setup,
+.playing,
+.done {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.noun-count {
+  color: var(--color-text-muted);
+}
+
+.muted {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 48px 0;
+  max-width: 360px;
+}
+
+.progress {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.progress-label {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.noun {
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 16px 0;
+}
+
+.answer-buttons {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.answer-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 96px;
+  padding: 16px 24px;
+  font-size: 1.125rem;
+  font-weight: 700;
+  text-transform: lowercase;
+  border-radius: 12px;
+  border: 2px solid;
+  background: var(--color-surface);
+  cursor: pointer;
+
+  &:disabled {
+    cursor: default;
+  }
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+// Default (unanswered) colors - border + text only, so color isn't the
+// only signal: the "der"/"die"/"das" label is always there too.
+.answer-btn {
+  &[data-gender='der'] {
+    color: var(--color-der);
+    border-color: var(--color-der);
+  }
+  &[data-gender='die'] {
+    color: var(--color-die);
+    border-color: var(--color-die);
+  }
+  &[data-gender='das'] {
+    color: var(--color-das);
+    border-color: var(--color-das);
+  }
+
+  &.correct {
+    background: var(--color-das);
+    border-color: var(--color-das);
+    color: #ffffff;
+  }
+
+  &.wrong {
+    background: var(--color-die);
+    border-color: var(--color-die);
+    color: #ffffff;
+  }
+
+  &.reveal {
+    border-color: var(--color-das);
+    border-style: dashed;
+  }
+
+  &.dim {
+    opacity: 0.5;
+  }
+}
+
+.feedback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.feedback-word {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.plural {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.score {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.result-message {
+  color: var(--color-text-muted);
+}
+
+.wrong-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  max-width: 360px;
+  text-align: left;
+}
+
+.wrong-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.wrong-list .german {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.wrong-list .comparison {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.done-actions {
+  display: flex;
+  gap: 16px;
+}
+
+// Feedback color changes are instant state, not motion - nothing here
+// animates, so there's nothing to disable under reduced motion. The
+// Flashcard's 3D flip is the only animated piece in this app.

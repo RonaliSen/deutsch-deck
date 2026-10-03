@@ -1,8 +1,12 @@
-/** Fisher-Yates shuffle. Doesn't mutate the input. */
-export function shuffle<T>(items: readonly T[]): T[] {
+/**
+ * Fisher-Yates shuffle. Doesn't mutate the input.
+ * `random` defaults to Math.random; pass a fixed one in tests for a
+ * predictable, assertable order.
+ */
+export function shuffle<T>(items: readonly T[], random: () => number = Math.random): T[] {
   const result = [...items];
   for (let i = result.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
+    const j = Math.floor(random() * (i + 1));
     [result[i], result[j]] = [result[j], result[i]];
   }
   return result;

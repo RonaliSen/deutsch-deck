@@ -1,0 +1,105 @@
+@switch (session.status()) {
+  @case ('setup') {
+    <div class="setup">
+      <h1>Quiz</h1>
+
+      @if (globalNounCount() < minNouns) {
+        <div class="empty-state">
+          <p>You need at least {{ minNouns }} nouns with an article to quiz. Add some words first.</p>
+          <a mat-button routerLink="/words">Go to Words</a>
+        </div>
+      } @else {
+        <mat-chip-listbox aria-label="Filter by level">
+          @for (level of levelChips; track level) {
+            <mat-chip-option [selected]="setupLevel() === level" (click)="setLevel(level)">
+              {{ level === 'all' ? 'All' : level }}
+            </mat-chip-option>
+          }
+        </mat-chip-listbox>
+
+        <p class="noun-count">{{ filteredNouns().length }} noun{{ filteredNouns().length === 1 ? '' : 's' }} available</p>
+
+        <button mat-flat-button type="button" [disabled]="filteredNouns().length < minNouns" (click)="startQuiz()">Start</button>
+
+        @if (filteredNouns().length < minNouns) {
+          <p class="muted">Not enough nouns at this level (need at least {{ minNouns }}).</p>
+        }
+      }
+    </div>
+  }
+
+  @case ('playing') {
+    <div class="playing">
+      <div class="progress">
+        <mat-progress-bar mode="determinate" [value]="(session.progress().current / session.progress().total) * 100" />
+        <span class="progress-label">{{ session.progress().current }} / {{ session.progress().total }}</span>
+      </div>
+
+      @if (session.currentQuestion(); as question) {
+        <span class="sr-only" aria-live="polite">{{ liveText() }}</span>
+
+        <h2 class="noun">{{ question.german }}</h2>
+
+        <div class="answer-buttons">
+          @for (gender of genderOptions; track gender) {
+            <button
+              type="button"
+              class="answer-btn"
+              [class]="answerClass(gender)"
+              [attr.data-gender]="gender"
+              [disabled]="session.selectedAnswer() !== null"
+              [attr.aria-label]="genderLabel[gender]"
+              (click)="session.selectAnswer(gender)"
+            >
+              {{ gender }}
+              @if (answerClass(gender) === 'correct') {
+                <mat-icon>check</mat-icon>
+              }
+              @if (answerClass(gender) === 'wrong') {
+                <mat-icon>close</mat-icon>
+              }
+            </button>
+          }
+        </div>
+
+        @if (session.selectedAnswer(); as selected) {
+          @if (selected !== question.gender) {
+            <div class="feedback">
+              <app-article-badge [gender]="question.gender!" />
+              <span class="feedback-word">{{ question.german }}</span>
+              @if (question.plural) {
+                <span class="plural">Plural: {{ question.plural }}</span>
+              }
+            </div>
+          }
+          <button mat-flat-button type="button" (click)="session.next()">Next</button>
+        }
+      }
+    </div>
+  }
+
+  @case ('done') {
+    <div class="done">
+      <h1>Quiz complete</h1>
+      <p class="score">{{ session.score() }} / {{ session.questions().length }}</p>
+      <p class="result-message">{{ resultMessage() }}</p>
+
+      @if (wrongAnswers().length > 0) {
+        <h2>Wrong answers</h2>
+        <ul class="wrong-list">
+          @for (a of wrongAnswers(); track a.word.id) {
+            <li>
+              <span class="german">{{ a.word.german }}</span>
+              <span class="comparison">you said {{ a.chosen }}, correct: {{ a.word.gender }}</span>
+            </li>
+          }
+        </ul>
+      }
+
+      <div class="done-actions">
+        <button mat-stroked-button type="button" (click)="playAgain()">Play again</button>
+        <a mat-flat-button routerLink="/">Back to home</a>
+      </div>
+    </div>
+  }
+}
