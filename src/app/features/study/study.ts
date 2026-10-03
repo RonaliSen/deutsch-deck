@@ -8,7 +8,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { isDue } from '../../core/utils/leitner';
 import { LevelFilter, WordsStore } from '../../core/state/words.store';
 import { Flashcard } from '../../shared/flashcard/flashcard';
-import { StudySessionStore } from './study-session.store';
+import { SESSION_SIZE, StudySessionStore } from './study-session.store';
 
 const LEVEL_CHIPS: readonly LevelFilter[] = ['all', 'A1', 'A2', 'B1'];
 
@@ -53,6 +53,8 @@ export class Study {
       return true;
     });
   });
+
+  protected readonly sessionSize = computed(() => Math.min(this.dueWords().length, SESSION_SIZE));
 
   protected readonly knownCount = computed(() => this.session.results().filter((r) => r.knewIt).length);
   protected readonly missedWords = computed(() => this.session.results().filter((r) => !r.knewIt).map((r) => r.word));

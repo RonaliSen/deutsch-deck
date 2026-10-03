@@ -12,7 +12,7 @@ export interface SessionResult {
   knewIt: boolean;
 }
 
-const SESSION_SIZE = 20;
+export const SESSION_SIZE = 20;
 
 interface StudySessionState {
   queue: Word[];

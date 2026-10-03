@@ -34,7 +34,7 @@
 @media (min-width: 768px) {
   .filters {
     flex-direction: row;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
     max-width: none;
   }
@@ -54,6 +54,10 @@
 
 .topic-field {
   width: 100%;
+
+  // Matches the chip text size (--mat-chip-label-text-size: 14px) - the
+  // select trigger otherwise defaults to M3's body-large (16px).
+  --mat-select-trigger-text-size: var(--mat-chip-label-text-size, 14px);
 
   // Material's form-field density scale is a fixed container-height table:
   // 0 -> 56px, -1 -> 52px, -2 -> 48px, -3 -> 44px, -4 -> 40px. -4 lands on

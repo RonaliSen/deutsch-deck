@@ -21,20 +21,30 @@
             </mat-chip-listbox>
           </div>
 
-          <mat-form-field appearance="outline" class="topic-field" subscriptSizing="dynamic">
-            <mat-label>Topic</mat-label>
-            <mat-select [value]="setupTopic()" (selectionChange)="setupTopic.set($event.value)">
-              <mat-option value="all">All topics</mat-option>
-              @for (topic of topics(); track topic) {
-                <mat-option [value]="topic">{{ topic }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
+          <div class="field-group">
+            <span class="field-label" id="topic-filter-label">Topic</span>
+            <mat-form-field appearance="outline" class="topic-field" subscriptSizing="dynamic" hiddenLabel>
+              <mat-select
+                [value]="setupTopic()"
+                (selectionChange)="setupTopic.set($event.value)"
+                aria-labelledby="topic-filter-label"
+              >
+                <mat-option value="all">All topics</mat-option>
+                @for (topic of topics(); track topic) {
+                  <mat-option [value]="topic">{{ topic }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
         </div>
 
-        <p class="due-count">{{ dueWords().length }} word{{ dueWords().length === 1 ? '' : 's' }} due</p>
+        <p class="due-count">
+          {{ dueWords().length }} word{{ dueWords().length === 1 ? '' : 's' }} due · this session: {{ sessionSize() }}
+        </p>
 
-        <button mat-flat-button type="button" [disabled]="dueWords().length === 0" (click)="startSession()">Start</button>
+        <button mat-flat-button type="button" [disabled]="dueWords().length === 0" (click)="startSession()">
+          Start session ({{ sessionSize() }})
+        </button>
 
         @if (dueWords().length === 0) {
           <p class="muted">No due words match these filters.</p>
