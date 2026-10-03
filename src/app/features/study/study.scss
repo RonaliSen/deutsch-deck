@@ -1,3 +1,5 @@
+@use '@angular/material' as mat;
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -22,14 +24,60 @@
 
 .filters {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  align-items: stretch;
   gap: 16px;
+  width: 100%;
+  max-width: 360px;
+}
+
+@media (min-width: 768px) {
+  .filters {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    max-width: none;
+  }
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.field-label {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
 }
 
 .topic-field {
-  min-width: 160px;
+  width: 100%;
+
+  // Material's form-field density scale is a fixed container-height table:
+  // 0 -> 56px, -1 -> 52px, -2 -> 48px, -3 -> 44px, -4 -> 40px. -4 lands on
+  // the 40px target. mat.define-theme() builds a theme object purely to
+  // carry that density value (it's the density mixin's only input);
+  // @include-ing it here, inside .topic-field, scopes the resulting CSS
+  // variables to this selector only - the app-wide theme (density: 0 in
+  // _theme.scss) is untouched everywhere else.
+  @include mat.form-field-density(
+    mat.define-theme(
+      (
+        density: (
+          scale: -4,
+        ),
+      )
+    )
+  );
+}
+
+@media (min-width: 768px) {
+  .topic-field {
+    width: auto;
+    min-width: 160px;
+  }
 }
 
 .due-count {

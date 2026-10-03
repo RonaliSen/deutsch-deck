@@ -10,15 +10,18 @@
         </div>
       } @else {
         <div class="filters">
-          <mat-chip-listbox aria-label="Filter by level">
-            @for (level of levelChips; track level) {
-              <mat-chip-option [selected]="setupLevel() === level" (click)="setLevel(level)">
-                {{ level === 'all' ? 'All' : level }}
-              </mat-chip-option>
-            }
-          </mat-chip-listbox>
+          <div class="field-group">
+            <span class="field-label" id="level-filter-label">Level</span>
+            <mat-chip-listbox aria-labelledby="level-filter-label">
+              @for (level of levelChips; track level) {
+                <mat-chip-option [selected]="setupLevel() === level" (click)="setLevel(level)">
+                  {{ level === 'all' ? 'All' : level }}
+                </mat-chip-option>
+              }
+            </mat-chip-listbox>
+          </div>
 
-          <mat-form-field appearance="outline" class="topic-field">
+          <mat-form-field appearance="outline" class="topic-field" subscriptSizing="dynamic">
             <mat-label>Topic</mat-label>
             <mat-select [value]="setupTopic()" (selectionChange)="setupTopic.set($event.value)">
               <mat-option value="all">All topics</mat-option>
