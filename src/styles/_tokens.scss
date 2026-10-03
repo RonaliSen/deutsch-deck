@@ -16,6 +16,20 @@
   --color-der: #3b82f6;
   --color-die: #ef4444;
   --color-das: #22c55e;
+
+  // *-text variants: darkened so they pass 4.5:1 as actual text color on
+  // --color-surface/--color-bg. The plain (vivid) tokens above read as
+  // 2.3-3.8:1 as text - fine for tinted backgrounds, icons and borders,
+  // but real WCAG AA failures for text. Use *-text wherever the color is
+  // applied to readable text; keep the vivid originals for backgrounds,
+  // tints and decorative icons.
+  --color-accent-text: #c2410c; // 5.2:1 on white (--color-accent alone is 2.8:1)
+  --color-der-text: #1d4ed8; // 6.7:1 on white (--color-der alone is 3.7:1)
+  --color-die-text: #b91c1c; // 6.5:1 on white (--color-die alone is 3.8:1)
+  // Darker than the 5.0:1 minimum-passing shade: this badge usually sits on
+  // a light tint background, not pure white, which erodes the margin -
+  // axe-core flagged the closer shade as failing in that real context.
+  --color-das-text: #166534; // 7.7:1 on white, 7.0:1 on the badge's tint
 }
 
 [data-theme='dark'] {
@@ -26,4 +40,14 @@
   --color-border: #44403c;
   --color-accent: #fb923c;
   --color-accent-hover: #f97316;
+
+  // Dark mode needs its own set: a color that's safe as text on a light
+  // background isn't automatically safe on a dark one, and vice versa.
+  // --color-das and dark --color-accent already pass 4.5:1 here unchanged
+  // (6.7:1 and 6.7:1) so they're not redefined - only der/die need a
+  // lighter shade than their vivid value to clear 4.5:1 on this background.
+  --color-der-text: #60a5fa; // 6.0:1 on dark surface (--color-der alone is 4.1:1)
+  --color-die-text: #f87171; // 5.5:1 on dark surface (--color-die alone is 4.0:1)
+  --color-das-text: #22c55e; // 6.7:1 on dark surface - same as --color-das
+  --color-accent-text: #fb923c; // 6.7:1 on dark surface - same as --color-accent
 }

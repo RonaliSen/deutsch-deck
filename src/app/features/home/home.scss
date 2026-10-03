@@ -75,7 +75,10 @@
   font-size: 40px;
   width: 40px;
   height: 40px;
-  color: var(--color-accent);
+  // mat-icon renders as a text glyph at a large size, so it's held to the
+  // same contrast rule as text - var(--color-accent) alone is 2.8:1 on
+  // white, below even the large-text 3:1 minimum.
+  color: var(--color-accent-text);
 
   &.muted {
     color: var(--color-text-muted);

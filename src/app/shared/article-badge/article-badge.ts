@@ -10,7 +10,7 @@ const GENDER_LABEL: Record<Gender, string> = {
 @Component({
   selector: 'app-article-badge',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: ` <span class="article-badge" [class]="'article-badge--' + gender()" [attr.aria-label]="label()">{{ gender() }}</span> `,
+  template: ` <span class="article-badge" [class]="'article-badge--' + gender()" [attr.aria-label]="label()" lang="de">{{ gender() }}</span> `,
   styleUrl: './article-badge.scss',
 })
 export class ArticleBadge {

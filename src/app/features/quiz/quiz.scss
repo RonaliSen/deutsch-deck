@@ -91,31 +91,38 @@
 }
 
 // Default (unanswered) colors - border + text only, so color isn't the
-// only signal: the "der"/"die"/"das" label is always there too.
+// only signal: the "der"/"die"/"das" label is always there too. Text uses
+// the *-text token (border stays on the vivid brand color - border
+// contrast rules are more lenient than text, and this keeps the brand hue
+// visible at a glance).
 .answer-btn {
   &[data-gender='der'] {
-    color: var(--color-der);
+    color: var(--color-der-text);
     border-color: var(--color-der);
   }
   &[data-gender='die'] {
-    color: var(--color-die);
+    color: var(--color-die-text);
     border-color: var(--color-die);
   }
   &[data-gender='das'] {
-    color: var(--color-das);
+    color: var(--color-das-text);
     border-color: var(--color-das);
   }
 
+  // White text on the vivid fill fails contrast (2.3:1 / 3.8:1) - das and
+  // die are the same fixed vivid hex in both themes, so a single hardcoded
+  // dark text color (not the --color-text token, which flips to near-white
+  // in dark mode) works correctly in both themes without extra tokens.
   &.correct {
     background: var(--color-das);
     border-color: var(--color-das);
-    color: #ffffff;
+    color: #1c1917;
   }
 
   &.wrong {
     background: var(--color-die);
     border-color: var(--color-die);
-    color: #ffffff;
+    color: #1c1917;
   }
 
   &.reveal {

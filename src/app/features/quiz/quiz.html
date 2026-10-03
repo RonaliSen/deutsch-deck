@@ -30,15 +30,16 @@
 
   @case ('playing') {
     <div class="playing">
+      <h1 class="sr-only">Quiz</h1>
       <div class="progress">
-        <mat-progress-bar mode="determinate" [value]="(session.progress().current / session.progress().total) * 100" />
+        <mat-progress-bar mode="determinate" [value]="(session.progress().current / session.progress().total) * 100" aria-label="Quiz progress" />
         <span class="progress-label">{{ session.progress().current }} / {{ session.progress().total }}</span>
       </div>
 
       @if (session.currentQuestion(); as question) {
         <span class="sr-only" aria-live="polite">{{ liveText() }}</span>
 
-        <h2 class="noun">{{ question.german }}</h2>
+        <h2 class="noun" lang="de">{{ question.german }}</h2>
 
         <div class="answer-buttons">
           @for (gender of genderOptions; track gender) {
@@ -49,6 +50,7 @@
               [attr.data-gender]="gender"
               [disabled]="session.selectedAnswer() !== null"
               [attr.aria-label]="genderLabel[gender]"
+              lang="de"
               (click)="session.selectAnswer(gender)"
             >
               {{ gender }}
@@ -66,9 +68,9 @@
           @if (selected !== question.gender) {
             <div class="feedback">
               <app-article-badge [gender]="question.gender!" />
-              <span class="feedback-word">{{ question.german }}</span>
+              <span class="feedback-word" lang="de">{{ question.german }}</span>
               @if (question.plural) {
-                <span class="plural">Plural: {{ question.plural }}</span>
+                <span class="plural">Plural: <span lang="de">{{ question.plural }}</span></span>
               }
             </div>
           }
@@ -89,8 +91,8 @@
         <ul class="wrong-list">
           @for (a of wrongAnswers(); track a.word.id) {
             <li>
-              <span class="german">{{ a.word.german }}</span>
-              <span class="comparison">you said {{ a.chosen }}, correct: {{ a.word.gender }}</span>
+              <span class="german" lang="de">{{ a.word.german }}</span>
+              <span class="comparison">you said <span lang="de">{{ a.chosen }}</span>, correct: <span lang="de">{{ a.word.gender }}</span></span>
             </li>
           }
         </ul>

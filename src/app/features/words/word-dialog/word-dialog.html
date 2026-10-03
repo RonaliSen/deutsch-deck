@@ -4,7 +4,7 @@
   <mat-dialog-content class="fields">
     <mat-form-field appearance="outline">
       <mat-label>German</mat-label>
-      <input matInput formControlName="german" required />
+      <input matInput formControlName="german" lang="de" required />
       @if (form.controls.german.invalid && form.controls.german.touched) {
         <mat-error>German word is required</mat-error>
       }
@@ -15,14 +15,14 @@
       <mat-select formControlName="gender">
         <mat-option value="">None</mat-option>
         @for (gender of genders; track gender) {
-          <mat-option [value]="gender">{{ gender }}</mat-option>
+          <mat-option [value]="gender" lang="de">{{ gender }}</mat-option>
         }
       </mat-select>
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Plural (optional)</mat-label>
-      <input matInput formControlName="plural" />
+      <input matInput formControlName="plural" lang="de" />
     </mat-form-field>
 
     <mat-form-field appearance="outline">

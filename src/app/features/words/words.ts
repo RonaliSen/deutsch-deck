@@ -55,7 +55,7 @@ export class Words {
 
   protected onAdd(): void {
     this.dialog
-      .open(WordDialog, { width: '480px' })
+      .open(WordDialog, { width: '480px', ariaModal: true })
       .afterClosed()
       .subscribe((result) => {
         if (result) {
@@ -66,7 +66,7 @@ export class Words {
 
   protected onEdit(word: Word): void {
     this.dialog
-      .open(WordDialog, { data: { word }, width: '480px' })
+      .open(WordDialog, { data: { word }, width: '480px', ariaModal: true })
       .afterClosed()
       .subscribe((result) => {
         if (result) {
@@ -84,6 +84,7 @@ export class Words {
           confirmText: 'Delete',
         },
         width: '360px',
+        ariaModal: true,
       })
       .afterClosed()
       .subscribe((confirmed) => {

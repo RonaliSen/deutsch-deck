@@ -6,13 +6,13 @@
       @if (word().gender) {
         <app-article-badge [gender]="word().gender!" />
       }
-      <span class="german">{{ word().german }}</span>
+      <span class="german" lang="de">{{ word().german }}</span>
     </div>
 
     <div class="flashcard-face flashcard-back">
       <span class="english">{{ word().english }}</span>
       @if (word().plural) {
-        <span class="plural">Plural: {{ word().plural }}</span>
+        <span class="plural">Plural: <span lang="de">{{ word().plural }}</span></span>
       }
     </div>
   </div>

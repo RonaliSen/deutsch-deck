@@ -1,59 +1,68 @@
 # DeutschDeck
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.2.1.
+A free, offline-first German vocabulary trainer: flashcards with Leitner spaced repetition, a der/die/das article quiz, and a word list you manage yourself — all stored locally in your browser.
 
-## Development server
+**Live demo:** https://ronalisen.github.io/deutsch-deck/
 
-To start a local development server, run:
+[![CI](https://github.com/RonaliSen/deutsch-deck/actions/workflows/ci.yml/badge.svg)](https://github.com/RonaliSen/deutsch-deck/actions/workflows/ci.yml)
 
-```bash
-ng serve
-```
+## Screenshots
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+<!-- Drop PNGs/GIFs into docs/screenshots/ and reference them below. -->
 
-## Code scaffolding
+| Home | Study | Quiz | Words |
+| --- | --- | --- | --- |
+| ![Home](docs/screenshots/home.png) | ![Study](docs/screenshots/study.png) | ![Quiz](docs/screenshots/quiz.png) | ![Words](docs/screenshots/words.png) |
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Features
 
-```bash
-ng generate component component-name
-```
+- **Study mode** — flashcards with a Leitner box algorithm: words you know move up a box and come back less often, words you miss drop back to box 1.
+- **Quiz mode** — guess the article (der/die/das) for a noun, filterable by level, with a wrong-answer review at the end.
+- **Word list** — add, edit, delete, search, and filter your own vocabulary, with undo on delete.
+- **Home dashboard** — due-word count, recent activity, and quick links into Study/Quiz.
+- **Dark/light theme**, keyboard-accessible throughout, works fully offline after first load.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Tech stack
 
-```bash
-ng generate --help
-```
+- Angular 22 (standalone components, signals, `@defer`)
+- `@ngrx/signals` (SignalStore) for state
+- Dexie (IndexedDB) for local persistence
+- Angular Material
+- Vitest for unit tests
 
-## Building
+## Architecture decisions
 
-To build the project run:
+- **SignalStore per feature** (`words.store.ts`, `theme.store.ts`, `progress.store.ts`, plus session stores for Study/Quiz) keeps state, derived signals, and mutations colocated instead of spreading them across services and components.
+- **Pure utility functions for the Leitner algorithm** (`core/utils/leitner.ts`) — box/due-date math has no Angular or Dexie dependency, so it's tested as plain input → output with no mocking.
+- **Dexie + `liveQuery`** (`core/data/live-queries.ts`) — components reactively read IndexedDB changes without manually re-fetching after every write.
+- **Injectable DB (`providedIn: 'root'`)** rather than a module-level singleton — lets tests swap in a fake via Angular's `TestBed` instead of mocking a relative import, which the Angular unit-test builder doesn't support.
+- **Self-hosted body font (`@fontsource/inter`)** instead of a Google Fonts `<link>` — avoids sending visitor IPs to Google on every page load for the main typeface. (The Material Symbols icon font is still loaded from `fonts.googleapis.com` — a known gap, see Roadmap.)
+- **Accessibility as a default, not a pass** — visible focus rings, logical heading order, labelled icon buttons, `lang="de"` on every German word/phrase so screen readers switch pronunciation correctly, and contrast-checked colors in both themes.
 
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
+## Running locally
 
 ```bash
-ng e2e
+npm install
+npm start
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Open http://localhost:4200.
 
-## Additional Resources
+## Running tests
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+```bash
+npm test
+```
+
+Runs once and exits (no watch, no browser) — safe for CI.
+
+## Roadmap (Version 2)
+
+- Stats page (accuracy over time, per-topic breakdown)
+- Settings (daily goal, box intervals, data export/import)
+- PWA / offline install + background sync
+- Self-host the Material Symbols icon font to drop the remaining Google Fonts request
+
+## Why I built this
+
+I'm learning German in Munich — A2 done, B1 in progress — and kept losing track of der/die/das and the words I'd actually seen in class. Existing apps either cost money or wanted my data in the cloud, so I built a small offline one for myself.

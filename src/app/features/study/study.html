@@ -42,8 +42,9 @@
 
   @case ('studying') {
     <div class="studying">
+      <h1 class="sr-only">Study</h1>
       <div class="progress">
-        <mat-progress-bar mode="determinate" [value]="progressPercent()" />
+        <mat-progress-bar mode="determinate" [value]="progressPercent()" aria-label="Study session progress" />
         <span class="progress-label">{{ session.progress().current }} / {{ session.progress().total }}</span>
       </div>
 
@@ -70,7 +71,7 @@
         <ul class="missed-list">
           @for (word of missedWords(); track word.id) {
             <li>
-              <span class="german">{{ word.german }}</span>
+              <span class="german" lang="de">{{ word.german }}</span>
               <span class="english">{{ word.english }}</span>
             </li>
           }

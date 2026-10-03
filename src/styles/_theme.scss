@@ -33,3 +33,16 @@
     )
   );
 }
+
+// MDC-based Material buttons/chips suppress the browser's native focus
+// outline in favor of their own ".mat-focus-indicator" element - but that
+// element's structural CSS defaults its display to `none` until this
+// mixin sets `--mat-focus-indicator-display: block`. Without it, keyboard
+// focus on these components is effectively invisible (confirmed directly:
+// Tab-focusing the Start button showed cdk-keyboard-focused in the DOM but
+// rendered no visible ring at all). mat-icon-button wasn't affected - it
+// has its own ripple-based focus affordance - which is why this was easy
+// to miss by only checking some components.
+@mixin focus-indicators() {
+  @include mat.strong-focus-indicators();
+}

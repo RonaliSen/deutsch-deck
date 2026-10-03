@@ -12,8 +12,8 @@
   </div>
 } @else {
   <header class="greeting">
-    <h1>{{ greeting }}</h1>
-    <p class="date">{{ today | date: 'EEEE, d. MMMM' : undefined : 'de' }}</p>
+    <h1 lang="de">{{ greeting }}</h1>
+    <p class="date" lang="de">{{ today | date: 'EEEE, d. MMMM' : undefined : 'de' }}</p>
   </header>
 
   <div class="card-grid">
@@ -42,7 +42,7 @@
       @for (level of levels; track level) {
         <div class="level-row">
           <span class="level-label">{{ level }}</span>
-          <mat-progress-bar mode="determinate" [value]="progress.levelProgress()[level].percent" />
+          <mat-progress-bar mode="determinate" [value]="progress.levelProgress()[level].percent" [attr.aria-label]="level + ' progress'" />
           <span class="level-text">{{ progress.levelProgress()[level].mastered }} / {{ progress.levelProgress()[level].total }} mastered</span>
         </div>
       }
@@ -50,18 +50,22 @@
 
     <section class="card activity-card">
       <h2>Recent activity</h2>
-      @if (progress.lastSessions().length === 0) {
-        <p class="muted">No sessions yet.</p>
-      } @else {
-        <ul class="activity-list">
-          @for (session of progress.lastSessions(); track session.id) {
-            <li>
-              <mat-icon>{{ session.type === 'study' ? 'school' : 'quiz' }}</mat-icon>
-              <span class="activity-date">{{ session.date | date: 'd. MMM' : undefined : 'de' }}</span>
-              <span class="activity-score">{{ session.correct }} / {{ session.total }}</span>
-            </li>
-          }
-        </ul>
+      @defer (on viewport) {
+        @if (progress.lastSessions().length === 0) {
+          <p class="muted">No sessions yet.</p>
+        } @else {
+          <ul class="activity-list">
+            @for (session of progress.lastSessions(); track session.id) {
+              <li>
+                <mat-icon>{{ session.type === 'study' ? 'school' : 'quiz' }}</mat-icon>
+                <span class="activity-date" lang="de">{{ session.date | date: 'd. MMM' : undefined : 'de' }}</span>
+                <span class="activity-score">{{ session.correct }} / {{ session.total }}</span>
+              </li>
+            }
+          </ul>
+        }
+      } @placeholder {
+        <p class="muted">Loading…</p>
       }
     </section>
   </div>
