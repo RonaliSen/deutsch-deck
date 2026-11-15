@@ -1,0 +1,79 @@
+@use '../dashboard' as *;
+
+@include card;
+
+// When the row's other panel is taller, center the levels in the spare
+// height instead of leaving a gap under them.
+.card {
+  display: flex;
+  flex-direction: column;
+}
+
+.levels {
+  @include bare-list;
+  flex: 1;
+  display: grid;
+  align-content: center;
+  gap: 20px;
+}
+
+.level {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  &--A1 {
+    @include tone('green');
+  }
+
+  &--A2 {
+    @include tone('blue');
+  }
+
+  &--B1 {
+    @include tone('violet');
+  }
+}
+
+.level-badge {
+  @include tint;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  font-weight: 700;
+}
+
+.level-body {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.level-top {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+}
+
+.level-pct {
+  color: var(--tone-text);
+  font-variant-numeric: tabular-nums;
+}
+
+mat-progress-bar {
+  --mat-progress-bar-active-indicator-color: var(--tone);
+  --mat-progress-bar-track-color: color-mix(in srgb, var(--tone) 16%, transparent);
+  --mat-progress-bar-active-indicator-height: 8px;
+  --mat-progress-bar-track-height: 8px;
+  --mat-progress-bar-track-shape: 999px;
+  border-radius: 999px;
+}
+
+.level-text {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}

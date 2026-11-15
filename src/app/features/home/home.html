@@ -1,0 +1,43 @@
+@if (wordsStore.loading()) {
+  <div class="dashboard" aria-hidden="true">
+    <div class="skeleton skeleton--hero"></div>
+    <div class="tiles">
+      @for (i of [1, 2, 3, 4]; track i) {
+        <div class="skeleton skeleton--tile"></div>
+      }
+    </div>
+    <div class="panels">
+      <div class="skeleton skeleton--card"></div>
+      <div class="skeleton skeleton--card"></div>
+    </div>
+  </div>
+} @else if (progress.totalWords() === 0) {
+  <section class="first-run">
+    <span class="first-run-icon"><mat-icon>style</mat-icon></span>
+    <h1>Welcome to DeutschDeck!</h1>
+    <p>Add your first words to get started.</p>
+    <a mat-flat-button routerLink="/words">Go to Words</a>
+  </section>
+} @else {
+  <div class="dashboard">
+    <app-home-hero [greeting]="greeting" [today]="today" [dueCount]="progress.dueTodayCount()" />
+
+    <app-stat-tiles
+      [streak]="progress.streak()"
+      [mastered]="progress.masteredWords()"
+      [total]="progress.totalWords()"
+      [due]="progress.dueTodayCount()"
+      [accuracy]="progress.recentAccuracy()"
+      [sessionCount]="progress.lastSessions().length"
+    />
+
+    <div class="panels">
+      <app-level-progress
+        [progress]="progress.levelProgress()"
+        [mastered]="progress.masteredWords()"
+        [total]="progress.totalWords()"
+      />
+      <app-recent-activity [sessions]="progress.lastSessions()" />
+    </div>
+  </div>
+}

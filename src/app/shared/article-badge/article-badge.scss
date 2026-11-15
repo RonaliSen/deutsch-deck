@@ -1,0 +1,28 @@
+.article-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+  text-transform: lowercase;
+}
+
+// Text color uses the *-text token (darkened for 4.5:1 contrast); the
+// background tint stays on the vivid brand color since a decorative tint
+// has no text-contrast requirement of its own.
+.article-badge--der {
+  color: var(--color-der-text);
+  background: color-mix(in srgb, var(--color-der) 12%, transparent);
+}
+
+.article-badge--die {
+  color: var(--color-die-text);
+  background: color-mix(in srgb, var(--color-die) 12%, transparent);
+}
+
+.article-badge--das {
+  color: var(--color-das-text);
+  background: color-mix(in srgb, var(--color-das) 12%, transparent);
+}

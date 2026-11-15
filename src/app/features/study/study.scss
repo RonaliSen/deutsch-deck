@@ -1,0 +1,214 @@
+@use '../../../styles/ui' as *;
+
+@include tone-classes('red', 'green');
+
+// The Study page is the query container for its own layout and for the
+// setup/summary children's `@container study` rules - sized by the content
+// column, not the viewport (the desktop sidebar takes 240px of it).
+:host {
+  display: block;
+  container: study / inline-size;
+}
+
+.sr-only {
+  @include sr-only;
+}
+
+// --- Studying ---
+
+.studying {
+  display: grid;
+  // minmax(0, …): one long word can't widen the column past the screen.
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.run-head {
+  display: grid;
+  gap: 8px;
+}
+
+.run-count {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+
+  strong {
+    color: var(--color-text);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+mat-progress-bar {
+  --mat-progress-bar-active-indicator-color: var(--color-accent);
+  --mat-progress-bar-track-color: color-mix(in srgb, var(--color-accent) 16%, transparent);
+  --mat-progress-bar-active-indicator-height: 8px;
+  --mat-progress-bar-track-height: 8px;
+  --mat-progress-bar-track-shape: 999px;
+  border-radius: 999px;
+}
+
+// Fixed minimum height so the card doesn't jump when Show answer swaps
+// for the two rating buttons.
+.controls {
+  display: grid;
+  gap: 10px;
+  min-height: 104px;
+  align-content: start;
+}
+
+%control {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  border-radius: 16px;
+  font: inherit;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--color-accent-text);
+    outline-offset: 3px;
+  }
+
+  mat-icon {
+    flex: none;
+  }
+}
+
+kbd {
+  display: none;
+  margin-left: auto;
+  padding: 2px 8px;
+  border: 1px solid currentColor;
+  border-radius: 6px;
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.reveal {
+  @extend %control;
+  justify-content: center;
+  min-height: 56px;
+  padding: 0 20px;
+  border: none;
+  background: var(--gradient-hero);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  box-shadow: 0 12px 24px -12px rgb(190 18 60 / 60%);
+
+  kbd {
+    margin-left: 4px;
+    border-color: rgb(255 255 255 / 60%);
+  }
+}
+
+.rate-prompt {
+  margin: 0;
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.rate-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.rate {
+  @extend %control;
+  @include tint;
+  // Phone-narrow: icon, label and outcome stacked and centered, so the two
+  // buttons still fit side by side without the text breaking mid-phrase.
+  // Wider: one row, icon on the left (see @container below).
+  flex-direction: column;
+  gap: 6px;
+  min-height: 64px;
+  padding: 10px 8px;
+  border: 1.5px solid color-mix(in srgb, var(--tone) 45%, transparent);
+  text-align: center;
+
+  &:hover {
+    background: color-mix(in srgb, var(--tone) 20%, transparent);
+    box-shadow: 0 10px 20px -14px var(--tone);
+  }
+}
+
+.rate-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  // --tone-text, not the vivid --tone: white on vivid green is ~2.3:1.
+  // Inverting to the contrast-safe shade works in both themes (surface on
+  // --tone-text is >= 5.5:1 light and dark).
+  background: var(--tone-text);
+  color: var(--color-surface);
+}
+
+.rate-text {
+  display: grid;
+  justify-items: center;
+  min-width: 0;
+
+  strong {
+    font-size: 1rem;
+  }
+
+  small {
+    font-size: 0.8125rem;
+  }
+}
+
+@container study (min-width: 440px) {
+  .rate {
+    flex-direction: row;
+    gap: 12px;
+    padding: 10px 14px;
+    text-align: left;
+  }
+
+  .rate-text {
+    justify-items: start;
+  }
+}
+
+// Key hints only where there's room and (likely) a keyboard.
+@container study (min-width: 560px) {
+  @media (hover: hover) {
+    kbd {
+      display: inline-block;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .rate {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
+  }
+}

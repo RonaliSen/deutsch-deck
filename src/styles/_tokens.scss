@@ -1,0 +1,67 @@
+// Design tokens as CSS custom properties.
+// Light values live on :root (the default). Dark values override them when
+// the ThemeStore (milestone 1, step 3) puts data-theme="dark" on <html>.
+//
+// der/die/das colors stay the same in both modes - they're already vivid
+// enough to read on both light and dark backgrounds.
+:root {
+  --color-bg: #fafaf9;
+  --color-surface: #ffffff;
+  --color-text: #1c1917;
+  --color-text-muted: #78716c;
+  --color-border: #e7e5e4;
+  --color-accent: #f97316;
+  --color-accent-hover: #ea580c;
+
+  --color-der: #3b82f6;
+  --color-die: #ef4444;
+  --color-das: #22c55e;
+
+  // *-text variants: darkened so they pass 4.5:1 as actual text color on
+  // --color-surface/--color-bg. The plain (vivid) tokens above read as
+  // 2.3-3.8:1 as text - fine for tinted backgrounds, icons and borders,
+  // but real WCAG AA failures for text. Use *-text wherever the color is
+  // applied to readable text; keep the vivid originals for backgrounds,
+  // tints and decorative icons.
+  --color-accent-text: #c2410c; // 5.2:1 on white (--color-accent alone is 2.8:1)
+  --color-der-text: #1d4ed8; // 6.7:1 on white (--color-der alone is 3.7:1)
+  --color-die-text: #b91c1c; // 6.5:1 on white (--color-die alone is 3.8:1)
+  // Darker than the 5.0:1 minimum-passing shade: this badge usually sits on
+  // a light tint background, not pure white, which erodes the margin -
+  // axe-core flagged the closer shade as failing in that real context.
+  --color-das-text: #166534; // 7.7:1 on white, 7.0:1 on the badge's tint
+
+  // Extra dashboard tones (Home stat tiles, B1 level, score pills).
+  // Same vivid/-text split as above: vivid for tints, bars and icons;
+  // -text wherever the color is applied to readable text.
+  --color-violet: #8b5cf6;
+  --color-violet-text: #6d28d9; // 7.1:1 on white, 6.1:1 on a 12% violet tint
+  --color-amber: #f59e0b;
+  --color-amber-text: #92400e; // 7.1:1 on white, 6.5:1 on a 12% amber tint
+
+  // Home hero banner. Every stop clears 5:1 against white text, so the
+  // greeting and its small supporting copy stay AA on any part of it.
+  --gradient-hero: linear-gradient(125deg, #c2410c 0%, #be123c 55%, #9d174d 100%); // 5.2 / 6.3 / 7.9:1 vs white
+}
+
+[data-theme='dark'] {
+  --color-bg: #1c1917;
+  --color-surface: #292524;
+  --color-text: #faf9f9;
+  --color-text-muted: #a8a29e;
+  --color-border: #44403c;
+  --color-accent: #fb923c;
+  --color-accent-hover: #f97316;
+
+  // Dark mode needs its own set: a color that's safe as text on a light
+  // background isn't automatically safe on a dark one, and vice versa.
+  // --color-das and dark --color-accent already pass 4.5:1 here unchanged
+  // (6.7:1 and 6.7:1) so they're not redefined - only der/die need a
+  // lighter shade than their vivid value to clear 4.5:1 on this background.
+  --color-der-text: #60a5fa; // 6.0:1 on dark surface (--color-der alone is 4.1:1)
+  --color-die-text: #f87171; // 5.5:1 on dark surface (--color-die alone is 4.0:1)
+  --color-das-text: #22c55e; // 6.7:1 on dark surface - same as --color-das
+  --color-accent-text: #fb923c; // 6.7:1 on dark surface - same as --color-accent
+  --color-violet-text: #c4b5fd; // 8.2:1 on dark surface, 7.2:1 on a 12% violet tint
+  --color-amber-text: #fbbf24; // 9.1:1 on dark surface, 7.2:1 on a 12% amber tint
+}

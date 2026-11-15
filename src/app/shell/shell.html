@@ -1,0 +1,46 @@
+@if (isDesktop()) {
+  <div class="shell shell--desktop">
+    <aside class="sidebar">
+      <div class="logo">DeutschDeck</div>
+
+      <nav aria-label="Primary navigation">
+        @for (item of navItems; track item.path) {
+          <a [routerLink]="item.path" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page">
+            <mat-icon>{{ item.icon }}</mat-icon>
+            <span>{{ item.label }}</span>
+          </a>
+        }
+      </nav>
+
+      <app-theme-toggle class="sidebar-theme-toggle" />
+    </aside>
+
+    <div class="shell-body">
+      <main class="content">
+        <router-outlet />
+      </main>
+    </div>
+  </div>
+} @else {
+  <div class="shell shell--mobile">
+    <header class="topbar">
+      <span class="app-name">DeutschDeck</span>
+      <app-theme-toggle />
+    </header>
+
+    <div class="shell-body">
+      <main class="content">
+        <router-outlet />
+      </main>
+    </div>
+
+    <nav class="bottom-tabs" aria-label="Primary navigation">
+      @for (item of navItems; track item.path) {
+        <a [routerLink]="item.path" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page">
+          <mat-icon>{{ item.icon }}</mat-icon>
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+  </div>
+}

@@ -1,0 +1,53 @@
+<dl class="stats" aria-label="Your stats">
+  <div class="stat tone-orange" [class.stat--idle]="streak() === 0">
+    <dt>
+      <span class="chip"><mat-icon>local_fire_department</mat-icon></span> Streak
+    </dt>
+    <dd class="stat-value">
+      {{ streak() }} <small>{{ streak() === 1 ? 'day' : 'days' }}</small>
+    </dd>
+    <dd class="stat-hint">
+      {{ streak() > 0 ? 'Keep the flame alive!' : 'Study today to start a streak' }}
+    </dd>
+  </div>
+
+  <div class="stat tone-green">
+    <dt>
+      <span class="chip"><mat-icon>workspace_premium</mat-icon></span> Mastered
+    </dt>
+    <dd class="stat-value">
+      {{ mastered() }} <small>{{ mastered() === 1 ? 'word' : 'words' }}</small>
+    </dd>
+    <dd class="stat-hint">{{ masteredPercent() }}% of your deck</dd>
+  </div>
+
+  <div class="stat tone-blue">
+    <dt>
+      <span class="chip"><mat-icon>style</mat-icon></span> In your deck
+    </dt>
+    <dd class="stat-value">
+      {{ total() }} <small>{{ total() === 1 ? 'word' : 'words' }}</small>
+    </dd>
+    <dd class="stat-hint">{{ due() }} due for review</dd>
+  </div>
+
+  <div class="stat tone-violet">
+    <dt>
+      <span class="chip"><mat-icon>target</mat-icon></span> Accuracy
+    </dt>
+    <dd class="stat-value">
+      @if (accuracy() === null) {
+        <span aria-hidden="true">–</span><span class="sr-only">No data yet</span>
+      } @else {
+        {{ accuracy() }}<small>%</small>
+      }
+    </dd>
+    <dd class="stat-hint">
+      @if (sessionCount() > 0) {
+        Last {{ sessionCount() }} session{{ sessionCount() === 1 ? '' : 's' }}
+      } @else {
+        Finish a session to see it
+      }
+    </dd>
+  </div>
+</dl>

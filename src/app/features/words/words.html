@@ -1,0 +1,73 @@
+<app-page-banner
+  heading="My words"
+  headingId="words-title"
+  eyebrow="Vocabulary"
+  eyebrowIcon="menu_book"
+>
+  <p class="banner-sub">
+    Every word you study and quiz on lives here. Search, filter by level, and keep your list up to
+    date.
+  </p>
+  @if (isDesktop()) {
+    <button mat-flat-button type="button" class="add" (click)="onAdd()">
+      <mat-icon>add</mat-icon>
+      Add word
+    </button>
+  }
+
+  <!-- Decorative: a few list rows. -->
+  <div bannerArt class="rows-art" lang="de">
+    <span class="art-row art-row--der"><b>der</b> Tisch</span>
+    <span class="art-row art-row--die"><b>die</b> Tür</span>
+    <span class="art-row art-row--das"><b>das</b> Fenster</span>
+  </div>
+</app-page-banner>
+
+<section class="toolbar" aria-label="Search and filter">
+  <mat-form-field appearance="outline" class="search-field" subscriptSizing="dynamic">
+    <mat-label>Search</mat-label>
+    <mat-icon matPrefix>search</mat-icon>
+    <input
+      matInput
+      [value]="searchText()"
+      (input)="onSearchInput($event)"
+      placeholder="German or English"
+    />
+  </mat-form-field>
+
+  <div class="level-filter">
+    <span class="field-label" id="words-level-label">Level</span>
+    <mat-chip-listbox aria-labelledby="words-level-label">
+      @for (level of levelChips; track level) {
+        <mat-chip-option
+          [selected]="wordsStore.levelFilter() === level"
+          (click)="onLevelChipChange(level)"
+        >
+          {{ level === 'all' ? 'All' : level }}
+        </mat-chip-option>
+      }
+    </mat-chip-listbox>
+  </div>
+
+  <p class="count" role="status">
+    @let shown = wordsStore.filteredWords().length;
+    <strong>{{ shown }}</strong>
+    @if (shown !== wordsStore.totalCount()) {
+      of {{ wordsStore.totalCount() }}
+    }
+    {{ wordsStore.totalCount() === 1 ? 'word' : 'words' }}
+  </p>
+</section>
+
+<app-word-list
+  [words]="wordsStore.filteredWords()"
+  [fabSpace]="!isDesktop()"
+  (edit)="onEdit($event)"
+  (remove)="onDelete($event)"
+/>
+
+@if (!isDesktop()) {
+  <button mat-fab type="button" class="add-fab" aria-label="Add word" (click)="onAdd()">
+    <mat-icon>add</mat-icon>
+  </button>
+}

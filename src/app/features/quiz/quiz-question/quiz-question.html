@@ -1,0 +1,12 @@
+<section class="question" [class]="'tone-' + tone()" aria-labelledby="quiz-noun">
+  <p class="prompt">{{ answered() ? 'The answer' : 'Which article?' }}</p>
+  <h2 class="noun" id="quiz-noun" lang="de">
+    @if (answered()) {
+      <span class="slot slot--filled">{{ word().gender }}</span>
+    } @else {
+      <span class="slot" aria-hidden="true"></span>
+    }
+    {{ word().german }}
+  </h2>
+  <span class="level-pill">{{ word().level }}</span>
+</section>

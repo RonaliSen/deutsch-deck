@@ -1,0 +1,144 @@
+@use '../../../../styles/ui' as *;
+
+:host {
+  display: grid;
+  // minmax(0, …): one long word can't widen the column past the screen.
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+}
+
+// --- Banner content (the banner itself is app-page-banner) ---
+
+.banner-sub {
+  margin: 0;
+  max-width: 48ch;
+  font-size: 0.9375rem;
+}
+
+.article-art {
+  position: relative;
+  width: 250px;
+  height: 150px;
+}
+
+.tile {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 92px;
+  height: 92px;
+  border-radius: 22px;
+  background: var(--color-surface);
+  font-size: 1.625rem;
+  font-weight: 800;
+  box-shadow: 0 16px 32px -12px rgb(0 0 0 / 45%);
+
+  &--der {
+    left: 0;
+    top: 34px;
+    color: var(--color-der-text);
+    border-bottom: 6px solid var(--color-der);
+    transform: rotate(-10deg);
+  }
+
+  &--die {
+    left: 80px;
+    top: 0;
+    z-index: 1;
+    color: var(--color-die-text);
+    border-bottom: 6px solid var(--color-die);
+    transform: rotate(4deg);
+  }
+
+  &--das {
+    left: 158px;
+    top: 42px;
+    color: var(--color-das-text);
+    border-bottom: 6px solid var(--color-das);
+    transform: rotate(12deg);
+  }
+}
+
+// --- Setup card ---
+
+.card {
+  @include panel-card;
+}
+
+.setup-grid,
+.filters {
+  display: grid;
+  // minmax(0, …): one long word can't widen the column past the screen.
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
+  align-content: start;
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+}
+
+.field-label {
+  @include field-label;
+}
+
+mat-chip-listbox {
+  @include level-chips;
+}
+
+.tip {
+  @include notice;
+  align-items: flex-start;
+  line-height: 1.7;
+
+  kbd {
+    padding: 1px 6px;
+    border: 1px solid var(--color-border);
+    border-bottom-width: 2px;
+    border-radius: 6px;
+    background: var(--color-surface);
+    font: inherit;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+}
+
+.summary {
+  @include summary-panel;
+}
+
+.counts {
+  @include stat-pairs;
+}
+
+.count--questions dd {
+  color: var(--color-accent-text);
+}
+
+.note {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.start {
+  @include gradient-button;
+  margin-top: 4px;
+}
+
+.notice {
+  @include notice;
+}
+
+.empty-state {
+  @include empty-state;
+}
+
+@container quiz (min-width: 720px) {
+  .setup-grid {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: 32px;
+  }
+}

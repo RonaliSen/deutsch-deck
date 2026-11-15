@@ -1,0 +1,94 @@
+@switch (session.status()) {
+  @case ('setup') {
+    <app-quiz-setup
+      [level]="setupLevel()"
+      [nounCount]="filteredNouns().length"
+      [globalNounCount]="globalNounCount()"
+      [minNouns]="minNouns"
+      [questionCount]="questionCount()"
+      (levelChange)="setLevel($event)"
+      (start)="startQuiz()"
+    />
+  }
+
+  @case ('playing') {
+    <div class="playing">
+      <h1 class="sr-only">Quiz</h1>
+
+      <div class="run-head">
+        <span class="run-count">
+          Question <strong>{{ session.progress().current }}</strong> of
+          {{ session.progress().total }}
+        </span>
+        <mat-progress-bar
+          mode="determinate"
+          [value]="progressPercent()"
+          aria-label="Quiz progress"
+        />
+      </div>
+
+      @if (session.currentQuestion(); as question) {
+        <span class="sr-only" aria-live="polite">{{ liveText() }}</span>
+
+        @let selected = session.selectedAnswer();
+        <!-- Keyed by word id so each question gets a fresh card (and its
+             entrance animation) instead of reusing the previous one. -->
+        @for (q of [question]; track q.id) {
+          <app-quiz-question [word]="q" [answered]="selected !== null" />
+        }
+
+        <div class="answers" role="group" aria-label="Choose the article">
+          @for (gender of genderOptions; track gender; let i = $index) {
+            <button
+              type="button"
+              class="answer"
+              [class]="answerClass(gender)"
+              [attr.data-gender]="gender"
+              [disabled]="selected !== null"
+              [attr.aria-label]="genderLabel[gender]"
+              [attr.aria-keyshortcuts]="i + 1"
+              lang="de"
+              (click)="session.selectAnswer(gender)"
+            >
+              <span class="answer-word">{{ gender }}</span>
+              <span class="answer-name" lang="en">{{ genderName[gender] }}</span>
+              @switch (answerClass(gender)) {
+                @case ('correct') {
+                  <mat-icon class="answer-mark">check_circle</mat-icon>
+                }
+                @case ('reveal') {
+                  <mat-icon class="answer-mark">check_circle</mat-icon>
+                }
+                @case ('wrong') {
+                  <mat-icon class="answer-mark">cancel</mat-icon>
+                }
+                @case ('') {
+                  <kbd aria-hidden="true">{{ i + 1 }}</kbd>
+                }
+              }
+            </button>
+          }
+        </div>
+
+        @if (selected !== null) {
+          <app-quiz-feedback
+            [word]="question"
+            [correct]="selected === question.gender"
+            [last]="isLastQuestion()"
+            (next)="session.next()"
+          />
+        }
+      }
+    </div>
+  }
+
+  @case ('done') {
+    <app-quiz-results
+      [score]="session.score()"
+      [total]="session.questions().length"
+      [message]="resultMessage()"
+      [wrongAnswers]="wrongAnswers()"
+      (playAgain)="playAgain()"
+    />
+  }
+}

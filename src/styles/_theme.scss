@@ -1,0 +1,48 @@
+// Material 3 theme built on Material's orange tonal palette.
+// Angular Material's mat.theme() doesn't yet switch light/dark on its own
+// (the `color-scheme` theme-type exists in config validation but isn't
+// wired up in this version), so we emit the theme twice: once for :root
+// (light) and once scoped under [data-theme="dark"]. The attribute
+// selector wins over :root by specificity, so it overrides cleanly.
+@use '@angular/material' as mat;
+
+@mixin light() {
+  @include mat.theme(
+    (
+      color: (
+        theme-type: light,
+        primary: mat.$orange-palette,
+        tertiary: mat.$blue-palette,
+      ),
+      typography: 'Inter, system-ui, sans-serif',
+      density: 0,
+    )
+  );
+}
+
+@mixin dark() {
+  @include mat.theme(
+    (
+      color: (
+        theme-type: dark,
+        primary: mat.$orange-palette,
+        tertiary: mat.$blue-palette,
+      ),
+      typography: 'Inter, system-ui, sans-serif',
+      density: 0,
+    )
+  );
+}
+
+// MDC-based Material buttons/chips suppress the browser's native focus
+// outline in favor of their own ".mat-focus-indicator" element - but that
+// element's structural CSS defaults its display to `none` until this
+// mixin sets `--mat-focus-indicator-display: block`. Without it, keyboard
+// focus on these components is effectively invisible (confirmed directly:
+// Tab-focusing the Start button showed cdk-keyboard-focused in the DOM but
+// rendered no visible ring at all). mat-icon-button wasn't affected - it
+// has its own ripple-based focus affordance - which is why this was easy
+// to miss by only checking some components.
+@mixin focus-indicators() {
+  @include mat.strong-focus-indicators();
+}

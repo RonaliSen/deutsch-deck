@@ -1,0 +1,135 @@
+@use '../../../../styles/ui' as *;
+
+:host {
+  display: grid;
+  // minmax(0, …): one long word can't widen the column past the screen.
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+}
+
+// --- Banner content (the banner itself is app-page-banner) ---
+
+.score {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 14px;
+  margin: 0 0 24px;
+}
+
+.score-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.result-message {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  > * {
+    padding-inline: 24px;
+  }
+}
+
+// --- Wrong answers ---
+
+.card {
+  @include panel-card;
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  h2 {
+    margin: 0;
+  }
+}
+
+.badge {
+  @include tone('red');
+  @include tint;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.card-sub {
+  margin: 6px 0 16px;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.wrong-list {
+  @include bare-list;
+  display: grid;
+  // minmax(0, …): one long word can't widen the column past the screen.
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+
+  li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+  }
+}
+
+.noun {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.german {
+  font-weight: 600;
+  overflow-wrap: break-word;
+  min-width: 0;
+}
+
+.comparison {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+
+  strong {
+    color: var(--color-das-text);
+  }
+}
+
+.chosen {
+  color: var(--color-die-text);
+  text-decoration-thickness: 2px;
+}
+
+.perfect {
+  @include tone('green');
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--tone-text);
+  font-weight: 600;
+
+  p {
+    margin: 0;
+  }
+}
+
+@container quiz (min-width: 720px) {
+  .wrong-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

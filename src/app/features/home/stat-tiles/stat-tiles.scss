@@ -1,0 +1,113 @@
+@use '../dashboard' as *;
+
+@include tone-classes('orange', 'green', 'blue', 'violet');
+
+.sr-only {
+  @include sr-only;
+}
+
+.stats {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.stat {
+  @include surface;
+  padding: 16px;
+  // Tone glow in the top-right corner, fading out before it reaches text.
+  background:
+    radial-gradient(
+      circle at 100% 0,
+      color-mix(in srgb, var(--tone) 16%, transparent),
+      transparent 45%
+    ),
+    var(--color-surface);
+  animation: rise 0.5s ease-out both;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  @for $i from 2 through 4 {
+    &:nth-child(#{$i}) {
+      animation-delay: ($i - 1) * 60ms;
+    }
+  }
+
+  dt {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+  }
+
+  dd {
+    margin: 0;
+  }
+
+  &--idle .chip {
+    background: var(--color-bg);
+    color: var(--color-text-muted);
+  }
+}
+
+.chip {
+  @include chip;
+}
+
+.stats .stat-value {
+  margin-top: 14px;
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+
+  small {
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0;
+    color: var(--color-text-muted);
+  }
+}
+
+.stat-hint {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+@container dash (min-width: 560px) {
+  .stat {
+    padding: 20px;
+  }
+
+  .stats .stat-value {
+    font-size: 2rem;
+  }
+}
+
+@container dash (min-width: 800px) {
+  .stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stat {
+    animation: none;
+    transition: none;
+  }
+}

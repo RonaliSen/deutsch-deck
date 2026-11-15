@@ -1,0 +1,131 @@
+@use './dashboard' as *;
+
+// The dashboard is the query container for every panel's layout (the
+// children's `@container dash` rules). Sized by its own width, not the
+// viewport: at 768-1000px the desktop sidebar eats 240px, so a viewport
+// breakpoint would go multi-column exactly when there's least room.
+.dashboard {
+  container: dash / inline-size;
+  display: grid;
+  // minmax(0, …): one long word can't widen the column past the screen.
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+}
+
+.panels,
+.tiles {
+  display: grid;
+  // minmax(0, …): one long word can't widen the column past the screen.
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+}
+
+.tiles {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@container dash (min-width: 800px) {
+  .panels {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  }
+
+  .tiles {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+  }
+}
+
+// Staggered entrance (stat tiles animate themselves, one by one).
+app-home-hero,
+.panels > * {
+  animation: rise 0.5s ease-out both;
+}
+
+.panels > * {
+  animation-delay: 200ms;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+// --- First run ---
+
+.first-run {
+  @include surface;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 64px 24px;
+  text-align: center;
+
+  h1 {
+    margin: 12px 0 0;
+    font-size: 1.75rem;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    margin: 0 0 12px;
+    color: var(--color-text-muted);
+  }
+}
+
+.first-run-icon {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 22px;
+  background: var(--gradient-hero);
+  color: #fff;
+
+  mat-icon {
+    font-size: 36px;
+    width: 36px;
+    height: 36px;
+  }
+}
+
+// --- Loading skeleton ---
+
+.skeleton {
+  border-radius: $radius;
+  background: var(--color-border);
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+
+  &--hero {
+    height: 240px;
+  }
+
+  &--tile {
+    height: 132px;
+  }
+
+  &--card {
+    height: 280px;
+  }
+}
+
+@keyframes skeleton-pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  app-home-hero,
+  .panels > *,
+  .skeleton {
+    animation: none;
+  }
+
+  .skeleton {
+    opacity: 0.7;
+  }
+}
