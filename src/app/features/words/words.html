@@ -8,12 +8,39 @@
     Every word you study and quiz on lives here. Search, filter by level, and keep your list up to
     date.
   </p>
-  @if (isDesktop()) {
-    <button mat-flat-button type="button" class="add" (click)="onAdd()">
-      <mat-icon>add</mat-icon>
-      Add word
+  <!-- Page-level actions. Add word is the primary (filled) action; on mobile
+       it moves to the FAB, while Import/Export stay here at every width. -->
+  <div class="banner-actions">
+    @if (isDesktop()) {
+      <button mat-flat-button type="button" (click)="onAdd()">
+        <mat-icon>add</mat-icon>
+        Add word
+      </button>
+    }
+    <button
+      #importCsvButton
+      mat-stroked-button
+      type="button"
+      class="import-csv"
+      (click)="onImportCsv()"
+    >
+      <mat-icon>upload_file</mat-icon>
+      Import CSV
     </button>
-  }
+    <button mat-stroked-button type="button" class="export-csv" (click)="onExportCsv()">
+      <mat-icon>download</mat-icon>
+      Export CSV
+    </button>
+  </div>
+  <!-- Native file picker behind "Import CSV": `hidden` keeps it out of the
+       tab order and accessibility tree - the visible button is the control. -->
+  <input
+    #csvFileInput
+    type="file"
+    accept=".csv,text/csv"
+    hidden
+    (change)="onCsvFileSelected($event)"
+  />
 
   <!-- Decorative: a few list rows. -->
   <div bannerArt class="rows-art" lang="de">
@@ -22,6 +49,18 @@
     <span class="art-row art-row--das"><b>das</b> Fenster</span>
   </div>
 </app-page-banner>
+
+@if (csvImport(); as state) {
+  <app-csv-file-panel
+    [state]="state"
+    [plan]="csvPlan()"
+    (chooseAnother)="onImportCsv()"
+    (dismiss)="onCsvCancel()"
+    (importWords)="onCsvImportWords()"
+  />
+}
+<!-- Always rendered: a live region only announces changes to itself. -->
+<p class="sr-only" aria-live="polite">{{ csvLiveText() }}</p>
 
 <section class="toolbar" aria-label="Search and filter">
   <mat-form-field appearance="outline" class="search-field" subscriptSizing="dynamic">

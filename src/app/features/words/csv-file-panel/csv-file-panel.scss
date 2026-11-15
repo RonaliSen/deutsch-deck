@@ -1,0 +1,144 @@
+@use '../../../../styles/ui' as *;
+
+:host {
+  display: block;
+}
+
+.panel {
+  @include surface;
+  @include tone('green');
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas:
+    'icon text'
+    'actions actions';
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+
+  &--error {
+    @include tone('red');
+    border-color: color-mix(in srgb, var(--tone) 45%, var(--color-border));
+  }
+}
+
+.file-icon {
+  @include chip;
+  grid-area: icon;
+  align-self: start;
+}
+
+.file-text {
+  grid-area: text;
+  display: grid;
+  gap: 2px;
+
+  p {
+    margin: 0;
+  }
+
+  .problem {
+    margin-top: 4px;
+    font-size: 0.875rem;
+  }
+}
+
+// Import result: focused programmatically (so it's read out), but it isn't
+// a control - no focus ring.
+.result {
+  display: grid;
+  gap: 2px;
+  margin-top: 4px;
+  font-size: 0.9375rem;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.status {
+  @include field-label;
+
+  .panel--error & {
+    color: var(--tone-text);
+  }
+}
+
+.file-name {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  // Long generated names ("vocab-export-2026-03-10-final(2).csv") wrap
+  // rather than push the buttons off-screen.
+  overflow-wrap: anywhere;
+}
+
+.file-size {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.actions {
+  grid-area: actions;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+// Below the file row, full width, set off by a divider.
+.reading,
+.preview,
+.import,
+.save-error,
+.nothing-new {
+  grid-column: 1 / -1;
+}
+
+.reading,
+.preview {
+  grid-column: 1 / -1;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border);
+}
+
+.reading {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+// The page's primary-action style (Study/Quiz start, Save word).
+.import {
+  @include gradient-button;
+}
+
+.nothing-new {
+  @include notice;
+}
+
+.save-error {
+  @include notice;
+  @include tone('red'); // the panel's own tone is green
+  color: var(--tone-text);
+}
+
+// Same widths as the toolbar below (see words.scss).
+@container words (min-width: 560px) {
+  .panel {
+    padding: 20px;
+  }
+}
+
+@container words (min-width: 720px) {
+  .panel {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas: 'icon text actions';
+  }
+
+  // Wide: a normal-width button at the end, like the word dialog's Save.
+  .import {
+    justify-self: end;
+    width: auto;
+    padding-inline: 32px;
+  }
+}

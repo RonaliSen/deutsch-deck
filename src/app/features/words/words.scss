@@ -19,13 +19,28 @@
   font-size: 0.9375rem;
 }
 
-.add {
+// Add word (desktop only) + Import/Export CSV. Same spacing as the Home
+// hero's actions; the gradient-banner mixin themes the buttons (white
+// filled primary, white-outlined secondary, white focus ring).
+.banner-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
   margin-top: 20px;
-  padding-inline: 24px;
+
+  button {
+    // Narrow: share the row evenly, and fill it if they wrap (see the
+    // 640px query below for natural widths).
+    flex: 1 1 auto;
+    padding-inline: 24px;
+  }
 }
 
+// Decorative, so it yields to the buttons: app-page-banner would show it
+// from 560px, but beside it the banner text is too narrow for all three
+// buttons on one line (~450px) until the page is about 840px wide.
 .rows-art {
-  display: grid;
+  display: none;
   gap: 8px;
   width: 220px;
   transform: rotate(-4deg);
@@ -62,6 +77,11 @@
     @include tone('green');
     margin-left: 8px;
   }
+}
+
+// Out of the page grid's flow (absolute), so it adds no gap.
+.sr-only {
+  @include sr-only;
 }
 
 // --- Search + filter ---
@@ -149,5 +169,19 @@ mat-chip-listbox {
 
   .count {
     grid-column: 1 / -1;
+  }
+}
+
+// From here the banner text (~530px+) fits all three buttons at their
+// natural width, with room to spare.
+@container words (min-width: 640px) {
+  .banner-actions button {
+    flex: none;
+  }
+}
+
+@container words (min-width: 840px) {
+  .rows-art {
+    display: grid;
   }
 }

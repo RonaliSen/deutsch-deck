@@ -1,0 +1,211 @@
+@use '../../../../styles/ui' as *;
+
+:host {
+  display: grid;
+  gap: 16px;
+}
+
+p,
+h2 {
+  margin: 0;
+}
+
+h2 {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.sr-only {
+  @include sr-only;
+}
+
+// --- Counts: same tinted icon chips as the Home stat tiles ---
+
+.counts {
+  @include bare-list;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+}
+
+.count {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9375rem;
+
+  strong {
+    font-size: 1.25rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &--ok {
+    @include tone('green');
+  }
+
+  &--duplicate {
+    @include tone('amber');
+  }
+
+  &--error {
+    @include tone('red');
+  }
+}
+
+.count-icon {
+  @include chip;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.note {
+  @include notice;
+}
+
+// "You already imported this file" - amber, like the duplicate count. Text
+// in the full text color: muted text on a tint drops under 4.5:1.
+.again {
+  @include notice;
+  @include tone('amber');
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--tone) 10%, transparent);
+  color: var(--color-text);
+
+  mat-icon {
+    color: var(--tone-text);
+  }
+}
+
+.hint {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+// --- Rows with errors ---
+
+.errors {
+  @include tone('red');
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--tone) 7%, transparent);
+
+  // Muted text on this tint is 4.38:1 in light mode - under AA's 4.5:1.
+  .hint {
+    color: var(--color-text);
+  }
+}
+
+.error-list {
+  @include bare-list;
+  display: grid;
+  gap: 8px;
+  font-size: 0.875rem;
+
+  li {
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr);
+    gap: 8px;
+  }
+}
+
+.row-label {
+  font-weight: 700;
+  color: var(--tone-text);
+  font-variant-numeric: tabular-nums;
+}
+
+// --- Preview table ---
+
+.words {
+  display: grid;
+  gap: 8px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+th {
+  @include field-label;
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+}
+
+td {
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+  overflow-wrap: anywhere;
+}
+
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.german {
+  display: block;
+  font-weight: 700;
+  // lang="de" on the cell: long compounds break at German syllables, as in
+  // the word list ("Geschwindigkeits-begrenzung"), where the browser can.
+  hyphens: auto;
+}
+
+// Article/Level hug their badges; German/English share the rest.
+.narrow {
+  width: 1%;
+  white-space: nowrap;
+}
+
+// Skipped on import: same muted pill as the word list's topic.
+.duplicate {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.none {
+  color: var(--color-text-muted);
+}
+
+.level {
+  @include tint;
+  display: inline-block;
+  min-width: 24px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+
+  // Same level colors as the word list.
+  &--A1 {
+    @include tone('green');
+  }
+
+  &--A2 {
+    @include tone('blue');
+  }
+
+  &--B1 {
+    @include tone('violet');
+  }
+}

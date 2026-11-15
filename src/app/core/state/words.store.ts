@@ -4,6 +4,7 @@ import { DeutschDeckDb } from '../data/db';
 import { seedWordsIfEmpty } from '../data/seed-words';
 import { Level, Word, WordInput } from '../models/word.model';
 import { review } from '../utils/leitner';
+import { wordKey } from '../utils/word-key';
 
 export type LevelFilter = 'all' | Level;
 
@@ -84,6 +85,44 @@ export const WordsStore = signalStore(
         const saved: Word = { ...word, id };
         patchState(store, { words: [...store.words(), saved] });
         return saved;
+      },
+
+      /**
+       * Adds many words at once, skipping any that are already saved or
+       * earlier in `inputs` (same German + English - see wordKey). Existing
+       * words are never changed. New words start like addWord's: box 1,
+       * due now.
+       *
+       * The duplicate check reads the database itself, not this store's
+       * list (which is only complete once load() has finished), in the same
+       * transaction as the write - so the check and the insert are atomic,
+       * and a failed write saves none of the words.
+       */
+      async importWords(inputs: WordInput[]): Promise<{ added: Word[]; duplicates: number }> {
+        const now = Date.now();
+        const result = await db.transaction('rw', db.words, async () => {
+          const seen = new Set((await db.words.toArray()).map(wordKey));
+          const fresh = inputs.filter((input) => {
+            const key = wordKey(input);
+            if (seen.has(key)) {
+              return false;
+            }
+            seen.add(key);
+            return true;
+          });
+          const duplicates = inputs.length - fresh.length;
+          if (fresh.length === 0) {
+            return { added: [] as Word[], duplicates };
+          }
+          const words = fresh.map((input) => ({ ...input, box: 1, dueAt: now, createdAt: now }));
+          const ids = await db.words.bulkAdd(words as Word[], { allKeys: true });
+          return { added: words.map((word, i): Word => ({ ...word, id: ids[i] })), duplicates };
+        });
+        if (result.added.length > 0) {
+          // One state update for the whole batch: the list and counts refresh once.
+          patchState(store, { words: [...store.words(), ...result.added] });
+        }
+        return result;
       },
 
       // Editing word info only - box/dueAt (review progress) are untouched.

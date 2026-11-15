@@ -1,0 +1,112 @@
+@let s = state();
+@let invalid = s.step === 'invalid';
+@let done = s.step === 'done';
+@let busy = s.step === 'reading' || s.step === 'importing';
+<section
+  class="panel"
+  [class.panel--error]="invalid"
+  [attr.aria-busy]="busy"
+  aria-labelledby="csv-file-status"
+>
+  <span class="file-icon">
+    <mat-icon>{{ invalid ? 'error' : done ? 'check_circle' : 'description' }}</mat-icon>
+  </span>
+
+  <div class="file-text">
+    <p class="status" id="csv-file-status">
+      {{ invalid ? 'Can’t use this file' : done ? 'Import complete' : 'Selected file' }}
+    </p>
+    @if (file(); as f) {
+      <p class="file-name">{{ f.name }}</p>
+      <p class="file-size">{{ size() }}</p>
+    }
+    @if (s.step === 'invalid') {
+      <p class="problem">{{ s.message }}</p>
+    }
+    @if (s.step === 'done') {
+      <div class="result" tabindex="-1" #result>
+        <p>
+          @if (s.added > 0) {
+            <strong>Added {{ s.added }} {{ s.added === 1 ? 'word' : 'words' }}</strong> to your
+            list.
+          } @else {
+            <strong>No words were added</strong> — they’re all in your list already.
+          }
+        </p>
+        @if (skipped(); as skippedText) {
+          <p>{{ skippedText }}</p>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Same two buttons in every state (relabelled once imported), so
+       switching between a good and a bad file never pulls focus out from
+       under the keyboard. Off while saving: the words are being written. -->
+  <div class="actions">
+    <button
+      mat-stroked-button
+      type="button"
+      [disabled]="s.step === 'importing'"
+      (click)="chooseAnother.emit()"
+    >
+      <mat-icon>upload_file</mat-icon>
+      {{ done ? 'Import another file' : 'Choose another file' }}
+    </button>
+    <button mat-button type="button" [disabled]="s.step === 'importing'" (click)="dismiss.emit()">
+      {{ done ? 'Done' : 'Cancel' }}
+    </button>
+  </div>
+
+  @if (s.step === 'reading') {
+    <p class="reading">Reading the file…</p>
+  } @else if ((s.step === 'preview' || s.step === 'importing') && plan(); as p) {
+    <app-csv-preview
+      class="preview"
+      [preview]="s.preview"
+      [plan]="p"
+      [previousImport]="s.previousImport ?? null"
+    />
+
+    @if (s.step === 'preview' && s.saveError) {
+      <p class="save-error" role="alert">
+        <mat-icon>error</mat-icon>
+        <span>{{ s.saveError }}</span>
+      </p>
+    }
+    @let newCount = p.newWords.length;
+    @if (newCount > 0) {
+      <!-- Not [disabled] while saving: that would drop keyboard focus.
+           Words ignores a second click instead. -->
+      <button
+        mat-flat-button
+        type="button"
+        class="import"
+        [attr.aria-disabled]="s.step === 'importing'"
+        (click)="importWords.emit()"
+      >
+        <!-- The icon alone in its @if: a single-element block is projected
+             into the button's icon slot; mixed with text it would land in
+             the label (and render at the wrong size). -->
+        @if (s.step !== 'importing') {
+          <mat-icon>library_add</mat-icon>
+        }
+        {{
+          s.step === 'importing'
+            ? 'Importing…'
+            : 'Import ' +
+              newCount +
+              (newCount === 1 ? ' word' : ' words') +
+              (s.previousImport ? ' again' : '')
+        }}
+      </button>
+    } @else if (s.preview.words.length > 0) {
+      <p class="nothing-new">
+        <mat-icon>info</mat-icon>
+        <span
+          >Every word in this file is already in your list, so there’s nothing new to import.</span
+        >
+      </p>
+    }
+  }
+</section>

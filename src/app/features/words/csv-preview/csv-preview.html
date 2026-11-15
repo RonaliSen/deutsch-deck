@@ -1,0 +1,123 @@
+@let p = preview();
+@let wordCount = p.words.length;
+@let errorCount = p.errors.length;
+
+@let newCount = plan().newWords.length;
+@let duplicateCount = plan().duplicates.size;
+<ul class="counts">
+  <li class="count count--ok">
+    <span class="count-icon"><mat-icon>check_circle</mat-icon></span>
+    <span
+      ><strong>{{ newCount }}</strong> new {{ newCount === 1 ? 'word' : 'words' }} to import</span
+    >
+  </li>
+  @if (duplicateCount > 0) {
+    <li class="count count--duplicate">
+      <span class="count-icon"><mat-icon>content_copy</mat-icon></span>
+      <span
+        ><strong>{{ duplicateCount }}</strong>
+        {{ duplicateCount === 1 ? 'duplicate' : 'duplicates' }} to skip</span
+      >
+    </li>
+  }
+  @if (errorCount > 0) {
+    <li class="count count--error">
+      <span class="count-icon"><mat-icon>error</mat-icon></span>
+      <span
+        ><strong>{{ errorCount }}</strong> {{ errorCount === 1 ? 'row' : 'rows' }} with errors</span
+      >
+    </li>
+  }
+</ul>
+
+@if (previousImportText(); as text) {
+  <p class="again">
+    <mat-icon>history</mat-icon>
+    <span>{{ text }}</span>
+  </p>
+}
+
+@if (p.ignoredColumns.length > 0) {
+  <p class="note">
+    <mat-icon>info</mat-icon>
+    <span>
+      Ignored {{ p.ignoredColumns.length === 1 ? 'column' : 'columns' }}:
+      {{ p.ignoredColumns.join(', ') }}. Only German, English, Article and Level are read for now.
+    </span>
+  </p>
+}
+
+@if (errorCount > 0) {
+  <section class="errors" aria-labelledby="csv-errors-title">
+    <h2 id="csv-errors-title">Rows with errors</h2>
+    <p class="hint">
+      These rows will be skipped. To include them, fix them in the file and choose it again.
+    </p>
+    <ul class="error-list">
+      @for (error of shownErrors(); track error.row) {
+        <li>
+          <!-- &ngsp;: a word gap for screen readers, invisible in the grid (as in the word list). -->
+          <span class="row-label">Row {{ error.row }}</span
+          >&ngsp;<span>{{ error.problems.join(' ') }}</span>
+        </li>
+      }
+    </ul>
+    @if (hiddenErrorCount() > 0) {
+      <p class="hint">
+        …and {{ hiddenErrorCount() }} more {{ hiddenErrorCount() === 1 ? 'row' : 'rows' }} with
+        errors.
+      </p>
+    }
+  </section>
+}
+
+@if (wordCount > 0) {
+  <section class="words" aria-labelledby="csv-preview-title">
+    <h2 id="csv-preview-title">Preview</h2>
+    <table aria-labelledby="csv-preview-title">
+      <thead>
+        <tr>
+          <th scope="col">German</th>
+          <th scope="col">English</th>
+          <th scope="col" class="narrow">Article</th>
+          <th scope="col" class="narrow">Level</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (word of shownWords(); track word.row) {
+          <tr>
+            <td>
+              <span class="german" lang="de">{{ word.german }}</span>
+              @if (plan().duplicates.get(word.row); as duplicate) {
+                <!-- &ngsp;: a word gap for screen readers, whatever the CSS. -->
+                &ngsp;<span class="duplicate">{{
+                  duplicate.of === 'existing'
+                    ? 'Already in your list'
+                    : 'Repeats row ' + duplicate.row
+                }}</span>
+              }
+            </td>
+            <td>{{ word.english }}</td>
+            <td class="narrow">
+              @if (word.gender) {
+                <app-article-badge [gender]="word.gender" />
+              } @else {
+                <span class="none" aria-hidden="true">—</span><span class="sr-only">none</span>
+              }
+            </td>
+            <td class="narrow">
+              <span class="level" [class]="'level--' + word.level">{{ word.level }}</span>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+    @if (wordCount > rowLimit) {
+      <p class="hint">Showing the first {{ rowLimit }} of {{ wordCount }} words.</p>
+    }
+  </section>
+} @else {
+  <p class="hint nothing">
+    None of the rows can be imported yet. Fix the errors above, then choose the file again.
+  </p>
+}
