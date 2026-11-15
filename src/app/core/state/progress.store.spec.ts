@@ -162,4 +162,17 @@ describe('ProgressStore', () => {
     expect(store.lastSessions()).toHaveLength(5);
     expect(store.lastSessions().map((s) => s.id)).toEqual([1, 2, 3, 4, 5]);
   });
+
+  it('recentAccuracy is answer-weighted over lastSessions and null with none', async () => {
+    const empty = await setupStore([], []);
+    expect(empty.recentAccuracy()).toBeNull();
+
+    TestBed.resetTestingModule();
+    await deleteTestDatabase();
+    const store = await setupStore(
+      [],
+      [session(1, { total: 10, correct: 8 }), session(2, { total: 10, correct: 5 })],
+    );
+    expect(store.recentAccuracy()).toBe(65);
+  });
 });
