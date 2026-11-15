@@ -1,0 +1,99 @@
+<app-page-banner
+  heading="Study"
+  headingId="study-title"
+  eyebrow="Spaced repetition"
+  eyebrowIcon="psychology"
+>
+  <p class="banner-sub">
+    Flip each card, then say whether you knew it. Words you know come back less often — the ones you
+    miss come back sooner.
+  </p>
+
+  <!-- Decorative: a card mid-flip, German side and English side. -->
+  <div bannerArt class="flip-art">
+    <span class="mini-card mini-card--back">to learn</span>
+    <span class="mini-card mini-card--front" lang="de">lernen</span>
+    <mat-icon class="flip-icon">sync</mat-icon>
+  </div>
+</app-page-banner>
+
+@if (globalDueCount() === 0) {
+  <section class="card empty-state">
+    <span class="empty-icon"><mat-icon>task_alt</mat-icon></span>
+    <p class="empty-title">All done for today! Come back tomorrow.</p>
+    <a mat-stroked-button routerLink="/words">Go to Words</a>
+  </section>
+} @else {
+  <section class="card setup" aria-labelledby="setup-title">
+    <h2 id="setup-title">Set up your session</h2>
+
+    <div class="setup-grid">
+      <div class="filters">
+        <div class="field">
+          <span class="field-label" id="level-filter-label">Level</span>
+          <mat-chip-listbox aria-labelledby="level-filter-label">
+            @for (chip of levelChips; track chip) {
+              <mat-chip-option [selected]="level() === chip" (click)="levelChange.emit(chip)">
+                {{ chip === 'all' ? 'All' : chip }}
+              </mat-chip-option>
+            }
+          </mat-chip-listbox>
+        </div>
+
+        <div class="field">
+          <span class="field-label" id="topic-filter-label">Topic</span>
+          <mat-form-field
+            appearance="outline"
+            class="topic-field"
+            subscriptSizing="dynamic"
+            hiddenLabel
+          >
+            <mat-select
+              [value]="topic()"
+              (selectionChange)="topicChange.emit($event.value)"
+              aria-labelledby="topic-filter-label"
+            >
+              <mat-option value="all">All topics</mat-option>
+              @for (t of topics(); track t) {
+                <mat-option [value]="t">{{ t }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="summary">
+        <dl class="counts">
+          <div class="count">
+            <dt>Words due</dt>
+            <dd>{{ dueCount() }}</dd>
+          </div>
+          <div class="count count--session">
+            <dt>This session</dt>
+            <dd>{{ sessionSize() }}</dd>
+          </div>
+        </dl>
+        <p class="limit-note">
+          Up to {{ sessionLimit }} cards per session, picked at random from the due words.
+        </p>
+
+        <button
+          mat-flat-button
+          type="button"
+          class="start"
+          [disabled]="dueCount() === 0"
+          (click)="start.emit()"
+        >
+          <mat-icon>play_arrow</mat-icon>
+          Start session ({{ sessionSize() }})
+        </button>
+
+        @if (dueCount() === 0) {
+          <p class="notice" role="status">
+            <mat-icon>filter_alt_off</mat-icon>No due words match these filters.
+          </p>
+        }
+      </div>
+    </div>
+  </section>
+}

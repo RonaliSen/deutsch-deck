@@ -1,27 +1,70 @@
 @use '@angular/material' as mat;
+@use '../../../../styles/ui' as *;
 
-.header-row {
+:host {
+  display: block;
+  container: word-dialog / inline-size;
+}
+
+// --- Header ---
+
+.dialog-head {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  // .mat-mdc-dialog-title already carries its own 24px left/right padding;
-  // move the right side onto this row so the close button isn't double-padded.
-  padding-right: 12px;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 8px 4px 16px;
+}
 
-  h2[mat-dialog-title] {
-    margin: 0;
-    padding-right: 0;
+.head-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: var(--gradient-hero);
+  color: #fff;
+}
+
+.head-text {
+  flex: 1;
+  min-width: 0;
+}
+
+// .mat-mdc-dialog-title brings its own padding and a ::before strut meant
+// for a standalone title row; both are replaced by .dialog-head's layout.
+h2[mat-dialog-title] {
+  margin: 0;
+  padding: 0;
+  font-size: 1.375rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+
+  &::before {
+    display: none;
   }
 }
 
-.fields {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+.head-sub {
+  margin: 2px 0 0;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
 
-  // Same approach as the Study filter's .topic-field: a form-field-only
-  // density scope, so nothing outside this dialog is affected.
-  // -2 -> 48px row height.
+// --- Fields ---
+
+.fields {
+  display: grid;
+  // minmax(0, …): one long word can't widen the column past the screen.
+  grid-template-columns: minmax(0, 1fr);
+  // start, not the default stretch: a field sharing a row with the taller
+  // Level block would otherwise grow to match it.
+  align-items: start;
+  gap: 16px;
+  padding-top: 16px;
+
+  // Form-field-only density scope (-2 -> 48px rows), like the Study topic
+  // select - nothing outside this dialog is affected.
   @include mat.form-field-density(
     mat.define-theme(
       (
@@ -31,12 +74,120 @@
       )
     )
   );
+
+  --mat-form-field-outlined-container-shape: 12px;
 }
 
-.fields > mat-form-field {
-  width: 100%;
+// Use the screen's height (minus header and actions) rather than
+// Material's fixed 65vh cap, so more fields fit on short phones.
+.fields.mat-mdc-dialog-content {
+  max-height: max(65vh, calc(100dvh - 200px));
 }
+
+.field {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+}
+
+.field-label {
+  @include field-label;
+}
+
+.optional {
+  font-weight: 400;
+}
+
+.error {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--mat-sys-error);
+}
+
+// Segmented toggles (article, level): one tap instead of a dropdown.
+.segmented {
+  --mat-button-toggle-height: 48px;
+  --mat-button-toggle-shape: 12px;
+  --mat-button-toggle-divider-color: var(--color-border);
+  --mat-button-toggle-label-text-weight: 600;
+  --mat-button-toggle-text-color: var(--color-text-muted);
+  display: flex;
+  width: 100%;
+  border-color: var(--color-border);
+
+  // The selected-state tokens are declared per toggle, not on the group:
+  // a custom property's var(--tone) resolves where it's declared, so a
+  // group-level declaration would pin every toggle to the group's tone.
+  mat-button-toggle {
+    @include tone('orange');
+    flex: 1;
+    --mat-button-toggle-selected-state-background-color: color-mix(
+      in srgb,
+      var(--tone) 14%,
+      transparent
+    );
+    --mat-button-toggle-selected-state-text-color: var(--tone-text);
+  }
+
+  // Selected article/level takes its own color, as everywhere else.
+  .seg-der,
+  .seg-A2 {
+    @include tone('blue');
+  }
+
+  .seg-die {
+    @include tone('red');
+  }
+
+  .seg-das,
+  .seg-A1 {
+    @include tone('green');
+  }
+
+  .seg-B1 {
+    @include tone('violet');
+  }
+}
+
+// --- Actions ---
 
 mat-dialog-actions {
-  padding-top: 24px;
+  gap: 8px;
+  padding: 12px 16px 16px;
+}
+
+.save {
+  @include gradient-button;
+  --mat-button-filled-container-height: 44px;
+  width: auto;
+  padding-inline: 24px;
+}
+
+// Two columns once the dialog is wide enough: German | Plural,
+// English full width, Level | Topic.
+// Roomier header and actions once the dialog isn't phone-narrow.
+@container word-dialog (min-width: 400px) {
+  .dialog-head {
+    gap: 14px;
+    padding: 24px 12px 8px 24px;
+  }
+
+  mat-dialog-actions {
+    padding: 16px 24px 24px;
+  }
+}
+
+@container word-dialog (min-width: 460px) {
+  .fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .field--wide {
+    grid-column: 1 / -1;
+  }
+
+  // Line Topic up with the Level toggles beside it (below their label).
+  .topic-field {
+    margin-top: 26px;
+  }
 }

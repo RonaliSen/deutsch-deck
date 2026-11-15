@@ -1,5 +1,5 @@
 import { Word } from '../models/word.model';
-import { computeStreak, greetingFor, levelProgress } from './progress';
+import { accuracyPercent, computeStreak, greetingFor, levelProgress } from './progress';
 
 function at(year: number, month: number, day: number, hour = 12, minute = 0, second = 0): number {
   return new Date(year, month - 1, day, hour, minute, second).getTime();
@@ -99,5 +99,25 @@ describe('greetingFor', () => {
   it('says Guten Abend! from 18:00 onward', () => {
     expect(greetingFor(new Date(2026, 2, 15, 18, 0))).toBe('Guten Abend!');
     expect(greetingFor(new Date(2026, 2, 15, 23, 59))).toBe('Guten Abend!');
+  });
+});
+
+describe('accuracyPercent', () => {
+  it('is null with no sessions', () => {
+    expect(accuracyPercent([])).toBeNull();
+  });
+
+  it('is null when every session is empty', () => {
+    expect(accuracyPercent([{ total: 0, correct: 0 }])).toBeNull();
+  });
+
+  it('weights by answers, not by session', () => {
+    // 2/2 and 10/20: a per-session average would say 75%, the real rate is 12/22.
+    expect(
+      accuracyPercent([
+        { total: 2, correct: 2 },
+        { total: 20, correct: 10 },
+      ]),
+    ).toBe(55);
   });
 });

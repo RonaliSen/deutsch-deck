@@ -1,19 +1,45 @@
-<button #cardButton type="button" class="flashcard" [class.flipped]="flipped()" [attr.aria-label]="ariaLabel()" (click)="toggle.emit()">
+<button
+  #cardButton
+  type="button"
+  class="flashcard"
+  [class.flipped]="flipped()"
+  [class]="'tone-' + tone()"
+  [attr.aria-label]="ariaLabel()"
+  (click)="toggle.emit()"
+>
   <span class="sr-only" aria-live="polite">{{ liveText() }}</span>
 
-  <div class="flashcard-inner">
+  <!-- Everything visible below is presentation only: the button's
+       aria-label and the live region above carry the accessible content. -->
+  <div class="flashcard-inner" aria-hidden="true">
     <div class="flashcard-face flashcard-front">
-      @if (word().gender) {
-        <app-article-badge [gender]="word().gender!" />
-      }
-      <span class="german" lang="de">{{ word().german }}</span>
+      <span class="face-meta">
+        <span class="meta-pill">{{ word().level }}</span>
+        <span class="meta-topic">{{ word().topic }}</span>
+      </span>
+      <span class="face-main">
+        @if (word().gender) {
+          <app-article-badge [gender]="word().gender!" />
+        }
+        <span class="german" lang="de">{{ word().german }}</span>
+      </span>
+      <span class="face-hint"><mat-icon>touch_app</mat-icon>Tap to reveal</span>
     </div>
 
     <div class="flashcard-face flashcard-back">
-      <span class="english">{{ word().english }}</span>
-      @if (word().plural) {
-        <span class="plural">Plural: <span lang="de">{{ word().plural }}</span></span>
-      }
+      <span class="face-meta">
+        <span class="meta-pill">English</span>
+      </span>
+      <span class="face-main">
+        <span class="back-german" lang="de">{{ word().gender }} {{ word().german }}</span>
+        <span class="english">{{ word().english }}</span>
+        @if (word().plural) {
+          <span class="plural"
+            >Plural: <span lang="de">{{ word().plural }}</span></span
+          >
+        }
+      </span>
+      <span class="face-hint"><mat-icon>flip</mat-icon>Tap to flip back</span>
     </div>
   </div>
 </button>

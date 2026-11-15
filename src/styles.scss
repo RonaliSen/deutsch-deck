@@ -29,19 +29,31 @@ body {
   height: 100%;
 }
 
-// The word-add/edit dialog's surface is an *ancestor* of its own component
-// (MatDialog projects app-word-dialog's content inside .mat-mdc-dialog-surface),
-// so component-scoped styles in word-dialog.scss can never reach it - only
-// a global rule, keyed off the panelClass passed to dialog.open(), can.
-.word-dialog-panel .mat-mdc-dialog-surface {
+// A dialog's surface is an *ancestor* of its own component (MatDialog
+// projects e.g. app-word-dialog's content inside .mat-mdc-dialog-surface),
+// so component-scoped styles can never reach it - only a global rule, keyed
+// off the panelClass passed to dialog.open(), can. Used by the word
+// add/edit dialog and the delete confirmation.
+.app-dialog-panel .mat-mdc-dialog-surface {
   --mat-dialog-container-color: var(--color-surface);
-  --mat-dialog-container-shape: 16px;
+  --mat-dialog-container-shape: 24px;
   --mat-dialog-container-elevation-shadow:
-    0 16px 40px -8px rgba(0, 0, 0, 0.35),
-    0 2px 8px rgba(0, 0, 0, 0.08);
+    0 24px 48px -12px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.08);
   border: 1px solid var(--color-border);
 }
 
-.word-dialog-backdrop {
+.app-dialog-backdrop {
   background: rgba(0, 0, 0, 0.6);
+}
+
+// Mobile only (below the shell's 768px desktop breakpoint): the bottom tab
+// bar (~64px) and the Words add FAB (56px, 16px above the tab bar) sit on
+// the bottom edge, where snack bars ("Word deleted / Undo") would otherwise
+// cover them. Lift snack bars above both. (Scoped to the overlay pane:
+// Material's own `.mat-mdc-snack-bar-container { margin: 8px }` is injected
+// after this stylesheet, so a same-specificity rule here would lose.)
+@media (max-width: 767.98px) {
+  .cdk-overlay-pane .mat-mdc-snack-bar-container {
+    margin-bottom: calc(64px + 16px + 56px + 8px);
+  }
 }

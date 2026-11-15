@@ -1,0 +1,27 @@
+<section class="card" aria-labelledby="levels-title">
+  <header class="card-head">
+    <h2 id="levels-title">Level progress</h2>
+    <span class="card-meta">{{ mastered() }} / {{ total() }} mastered</span>
+  </header>
+
+  <ul class="levels">
+    @for (level of levels; track level) {
+      @let stats = progress()[level];
+      <li class="level" [class]="'level--' + level">
+        <span class="level-badge">{{ level }}</span>
+        <div class="level-body">
+          <div class="level-top">
+            <span>{{ levelNames[level] }}</span>
+            <span class="level-pct">&ngsp;{{ stats.percent }}%</span>
+          </div>
+          <mat-progress-bar
+            mode="determinate"
+            [value]="stats.percent"
+            [attr.aria-label]="level + ' progress'"
+          />
+          <span class="level-text">{{ stats.mastered }} / {{ stats.total }} mastered</span>
+        </div>
+      </li>
+    }
+  </ul>
+</section>

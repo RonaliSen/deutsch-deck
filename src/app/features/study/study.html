@@ -1,64 +1,31 @@
 @switch (session.status()) {
   @case ('setup') {
-    <div class="setup">
-      <h1>Study</h1>
-
-      @if (globalDueCount() === 0) {
-        <div class="empty-state">
-          <p>All done for today! Come back tomorrow.</p>
-          <a mat-button routerLink="/words">Go to Words</a>
-        </div>
-      } @else {
-        <div class="filters">
-          <div class="field-group">
-            <span class="field-label" id="level-filter-label">Level</span>
-            <mat-chip-listbox aria-labelledby="level-filter-label">
-              @for (level of levelChips; track level) {
-                <mat-chip-option [selected]="setupLevel() === level" (click)="setLevel(level)">
-                  {{ level === 'all' ? 'All' : level }}
-                </mat-chip-option>
-              }
-            </mat-chip-listbox>
-          </div>
-
-          <div class="field-group">
-            <span class="field-label" id="topic-filter-label">Topic</span>
-            <mat-form-field appearance="outline" class="topic-field" subscriptSizing="dynamic" hiddenLabel>
-              <mat-select
-                [value]="setupTopic()"
-                (selectionChange)="setupTopic.set($event.value)"
-                aria-labelledby="topic-filter-label"
-              >
-                <mat-option value="all">All topics</mat-option>
-                @for (topic of topics(); track topic) {
-                  <mat-option [value]="topic">{{ topic }}</mat-option>
-                }
-              </mat-select>
-            </mat-form-field>
-          </div>
-        </div>
-
-        <p class="due-count">
-          {{ dueWords().length }} word{{ dueWords().length === 1 ? '' : 's' }} due · this session: {{ sessionSize() }}
-        </p>
-
-        <button mat-flat-button type="button" [disabled]="dueWords().length === 0" (click)="startSession()">
-          Start session ({{ sessionSize() }})
-        </button>
-
-        @if (dueWords().length === 0) {
-          <p class="muted">No due words match these filters.</p>
-        }
-      }
-    </div>
+    <app-study-setup
+      [level]="setupLevel()"
+      [topic]="setupTopic()"
+      [topics]="topics()"
+      [dueCount]="dueWords().length"
+      [sessionSize]="sessionSize()"
+      [globalDueCount]="globalDueCount()"
+      (levelChange)="setLevel($event)"
+      (topicChange)="setupTopic.set($event)"
+      (start)="startSession()"
+    />
   }
 
   @case ('studying') {
     <div class="studying">
       <h1 class="sr-only">Study</h1>
-      <div class="progress">
-        <mat-progress-bar mode="determinate" [value]="progressPercent()" aria-label="Study session progress" />
-        <span class="progress-label">{{ session.progress().current }} / {{ session.progress().total }}</span>
+
+      <div class="run-head">
+        <span class="run-count">
+          Card <strong>{{ session.progress().current }}</strong> of {{ session.progress().total }}
+        </span>
+        <mat-progress-bar
+          mode="determinate"
+          [value]="progressPercent()"
+          aria-label="Study session progress"
+        />
       </div>
 
       @if (session.currentCard(); as card) {
@@ -70,38 +37,55 @@
         @for (c of [card]; track c.id) {
           <app-flashcard [word]="c" [flipped]="session.isFlipped()" (toggle)="session.flip()" />
         }
-      }
 
-      @if (session.isFlipped()) {
-        <div class="answer-buttons">
-          <button mat-stroked-button type="button" (click)="session.answer(false)">Didn't know</button>
-          <button mat-flat-button type="button" (click)="session.answer(true)">Knew it</button>
+        <div class="controls">
+          @if (!session.isFlipped()) {
+            <button type="button" class="reveal" aria-keyshortcuts="Space" (click)="session.flip()">
+              <mat-icon>visibility</mat-icon>
+              Show answer
+              <kbd aria-hidden="true">Space</kbd>
+            </button>
+          } @else {
+            <p class="rate-prompt">Did you know it?</p>
+            <div class="rate-buttons">
+              <button
+                type="button"
+                class="rate tone-red"
+                aria-keyshortcuts="1"
+                (click)="session.answer(false)"
+              >
+                <span class="rate-icon"><mat-icon>close</mat-icon></span>
+                <span class="rate-text">
+                  <strong>Didn't know</strong>
+                  <small>{{ missedOutcome() }}</small>
+                </span>
+                <kbd aria-hidden="true">1</kbd>
+              </button>
+              <button
+                type="button"
+                class="rate tone-green"
+                aria-keyshortcuts="2"
+                (click)="session.answer(true)"
+              >
+                <span class="rate-icon"><mat-icon>check</mat-icon></span>
+                <span class="rate-text">
+                  <strong>Knew it</strong>
+                  <small>{{ knownOutcome() }}</small>
+                </span>
+                <kbd aria-hidden="true">2</kbd>
+              </button>
+            </div>
+          }
         </div>
       }
     </div>
   }
 
   @case ('done') {
-    <div class="done">
-      <h1>Session complete</h1>
-      <p class="summary">{{ knownCount() }} known, {{ missedWords().length }} not known</p>
-
-      @if (missedWords().length > 0) {
-        <h2>Missed words</h2>
-        <ul class="missed-list">
-          @for (word of missedWords(); track word.id) {
-            <li>
-              <span class="german" lang="de">{{ word.german }}</span>
-              <span class="english">{{ word.english }}</span>
-            </li>
-          }
-        </ul>
-      }
-
-      <div class="done-actions">
-        <button mat-stroked-button type="button" (click)="studyAgain()">Study again</button>
-        <a mat-flat-button routerLink="/">Back to home</a>
-      </div>
-    </div>
+    <app-study-summary
+      [knownCount]="knownCount()"
+      [missedWords]="missedWords()"
+      (studyAgain)="studyAgain()"
+    />
   }
 }

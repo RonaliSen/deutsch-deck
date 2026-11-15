@@ -8,11 +8,11 @@ import {
 } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { Gender, Level, Word, WordInput } from '../../../core/models/word.model';
 
 export interface WordDialogData {
@@ -21,7 +21,16 @@ export interface WordDialogData {
 
 const LEVELS: readonly Level[] = ['A1', 'A2', 'B1'];
 const GENDERS: readonly Gender[] = ['der', 'die', 'das'];
-const TOPICS: readonly string[] = ['food', 'home', 'family', 'work', 'travel', 'animals', 'school', 'other'];
+const TOPICS: readonly string[] = [
+  'food',
+  'home',
+  'family',
+  'work',
+  'travel',
+  'animals',
+  'school',
+  'other',
+];
 
 // Case-insensitive membership check - the control still holds whatever case
 // the user typed (so the autocomplete can keep matching), only save()
@@ -37,11 +46,11 @@ function topicValidator(control: AbstractControl<string>): ValidationErrors | nu
     ReactiveFormsModule,
     MatAutocompleteModule,
     MatButtonModule,
+    MatButtonToggleModule,
     MatDialogModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
-    MatSelectModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './word-dialog.html',

@@ -1,16 +1,22 @@
-import { ChangeDetectionStrategy, Component, HostListener, computed, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { MatButtonModule } from '@angular/material/button';
-import { MatChipsModule } from '@angular/material/chips';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  HostListener,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { Gender } from '../../core/models/word.model';
 import { LevelFilter, WordsStore } from '../../core/state/words.store';
-import { pickQuizWords } from '../../core/utils/quiz';
-import { ArticleBadge } from '../../shared/article-badge/article-badge';
+import { isInteractiveTarget } from '../../core/utils/keyboard';
+import { DEFAULT_COUNT, pickQuizWords } from '../../core/utils/quiz';
+import { QuizFeedback } from './quiz-feedback/quiz-feedback';
+import { QuizQuestion } from './quiz-question/quiz-question';
+import { QuizResults } from './quiz-results/quiz-results';
 import { QuizSessionStore } from './quiz-session.store';
-
-const LEVEL_CHIPS: readonly LevelFilter[] = ['all', 'A1', 'A2', 'B1'];
+import { QuizSetup } from './quiz-setup/quiz-setup';
 const GENDER_OPTIONS: readonly Gender[] = ['der', 'die', 'das'];
 const MIN_NOUNS = 4;
 
@@ -20,10 +26,23 @@ const GENDER_LABEL: Record<Gender, string> = {
   das: 'das (neuter)',
 };
 
+const GENDER_NAME: Record<Gender, string> = {
+  der: 'masculine',
+  die: 'feminine',
+  das: 'neuter',
+};
+
 @Component({
   selector: 'app-quiz',
   providers: [QuizSessionStore],
-  imports: [RouterLink, MatButtonModule, MatChipsModule, MatIconModule, MatProgressBarModule, ArticleBadge],
+  imports: [
+    MatIconModule,
+    MatProgressBarModule,
+    QuizSetup,
+    QuizQuestion,
+    QuizFeedback,
+    QuizResults,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './quiz.html',
   styleUrl: './quiz.scss',
@@ -32,21 +51,38 @@ export class Quiz {
   protected readonly wordsStore = inject(WordsStore);
   protected readonly session = inject(QuizSessionStore);
 
-  protected readonly levelChips = LEVEL_CHIPS;
   protected readonly genderOptions = GENDER_OPTIONS;
   protected readonly genderLabel = GENDER_LABEL;
+  protected readonly genderName = GENDER_NAME;
   protected readonly setupLevel = signal<LevelFilter>('all');
   protected readonly minNouns = MIN_NOUNS;
 
   // All nouns regardless of filter - tells "not enough words in the app at
   // all" (big friendly empty state) apart from "not enough at this level"
   // (small inline note, filters stay visible so the user can change them).
-  protected readonly nouns = computed(() => this.wordsStore.words().filter((word) => !!word.gender));
+  protected readonly nouns = computed(() =>
+    this.wordsStore.words().filter((word) => !!word.gender),
+  );
   protected readonly globalNounCount = computed(() => this.nouns().length);
 
   protected readonly filteredNouns = computed(() => {
     const level = this.setupLevel();
     return this.nouns().filter((word) => level === 'all' || word.level === level);
+  });
+
+  // pickQuizWords caps a quiz at DEFAULT_COUNT questions.
+  protected readonly questionCount = computed(() =>
+    Math.min(this.filteredNouns().length, DEFAULT_COUNT),
+  );
+
+  protected readonly progressPercent = computed(() => {
+    const { current, total } = this.session.progress();
+    return total === 0 ? 0 : (current / total) * 100;
+  });
+
+  protected readonly isLastQuestion = computed(() => {
+    const { current, total } = this.session.progress();
+    return current === total;
   });
 
   protected readonly liveText = computed(() => {
@@ -73,11 +109,14 @@ export class Quiz {
       return;
     }
 
-    // Native <button>s handle their own Enter activation (e.g. tabbing to
-    // "Next" and pressing Enter already calls next() via its own click
-    // binding) - handling Enter globally too would fire it twice.
-    const targetIsButton = (event.target as HTMLElement | null)?.tagName === 'BUTTON';
-    if (event.key === 'Enter' && !targetIsButton && this.session.selectedAnswer() !== null) {
+    // A focused button or link handles its own Enter activation (e.g.
+    // tabbing to "Next" and pressing Enter already calls next() via its own
+    // click binding) - handling Enter globally too would fire it twice.
+    if (
+      event.key === 'Enter' &&
+      !isInteractiveTarget(event.target) &&
+      this.session.selectedAnswer() !== null
+    ) {
       event.preventDefault();
       this.session.next();
     }
@@ -87,7 +126,9 @@ export class Quiz {
     this.setupLevel.set(level);
   }
 
-  protected readonly wrongAnswers = computed(() => this.session.answers().filter((a) => !a.correct));
+  protected readonly wrongAnswers = computed(() =>
+    this.session.answers().filter((a) => !a.correct),
+  );
 
   protected readonly resultMessage = computed(() => {
     const total = this.session.questions().length;

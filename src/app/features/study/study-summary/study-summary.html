@@ -1,0 +1,46 @@
+<app-page-banner
+  heading="Session complete"
+  headingId="done-title"
+  eyebrow="Nice work"
+  eyebrowIcon="emoji_events"
+>
+  <p class="summary">{{ knownCount() }} known, {{ missedWords().length }} not known</p>
+  <div class="actions">
+    <button mat-stroked-button type="button" (click)="studyAgain.emit()">
+      <mat-icon>replay</mat-icon>
+      Study again
+    </button>
+    <a mat-flat-button routerLink="/">Back to home</a>
+  </div>
+
+  <!-- The same numbers as the summary line, drawn as a ring. -->
+  <app-score-ring bannerArt [percent]="knownPercent()" label="known" />
+</app-page-banner>
+
+@if (missedWords().length > 0) {
+  <section class="card" aria-labelledby="missed-title">
+    <header class="card-head">
+      <h2 id="missed-title">Missed words</h2>
+      <span class="badge">{{ missedWords().length }}</span>
+    </header>
+    <p class="card-sub">These went back to box 1, so they're due again right away.</p>
+    <ul class="missed-list">
+      @for (word of missedWords(); track word.id) {
+        <li>
+          <span class="word">
+            @if (word.gender) {
+              <app-article-badge [gender]="word.gender" />
+            }
+            <span class="german" lang="de">{{ word.german }}</span>
+          </span>
+          <span class="english">{{ word.english }}</span>
+        </li>
+      }
+    </ul>
+  </section>
+} @else {
+  <section class="card perfect">
+    <mat-icon>verified</mat-icon>
+    <p>You knew every word in this session.</p>
+  </section>
+}

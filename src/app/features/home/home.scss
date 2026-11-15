@@ -1,188 +1,131 @@
-.greeting {
-  margin-bottom: 24px;
-}
+@use './dashboard' as *;
 
-.date {
-  color: var(--color-text-muted);
-}
-
-.first-run {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  text-align: center;
-  padding: 48px 0;
-}
-
-.card-grid {
+// The dashboard is the query container for every panel's layout (the
+// children's `@container dash` rules). Sized by its own width, not the
+// viewport: at 768-1000px the desktop sidebar eats 240px, so a viewport
+// breakpoint would go multi-column exactly when there's least room.
+.dashboard {
+  container: dash / inline-size;
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
+  // minmax(0, …): one long word can't widen the column past the screen.
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
 }
 
-@media (min-width: 768px) {
-  .card-grid {
-    grid-template-columns: 1fr 1fr;
+.panels,
+.tiles {
+  display: grid;
+  // minmax(0, …): one long word can't widen the column past the screen.
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+}
+
+.tiles {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@container dash (min-width: 800px) {
+  .panels {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  }
+
+  .tiles {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
   }
 }
 
-.card {
-  padding: 24px;
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  background: var(--color-surface);
+// Staggered entrance (stat tiles animate themselves, one by one).
+app-home-hero,
+.panels > * {
+  animation: rise 0.5s ease-out both;
 }
 
-.card h2 {
-  margin: 0 0 16px;
-  font-size: 1rem;
+.panels > * {
+  animation-delay: 200ms;
 }
 
-// --- Hero card ---
-
-.hero-card {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 16px;
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
 }
 
-.hero-count {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--color-text);
-  margin: 0;
-}
+// --- First run ---
 
-.hero-cta {
-  font-size: 1rem;
-  padding: 0 32px;
-}
-
-// --- Streak card ---
-
-.streak-card {
+.first-run {
+  @include surface;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   gap: 8px;
+  padding: 64px 24px;
   text-align: center;
-}
 
-.flame {
-  font-size: 40px;
-  width: 40px;
-  height: 40px;
-  // mat-icon renders as a text glyph at a large size, so it's held to the
-  // same contrast rule as text - var(--color-accent) alone is 2.8:1 on
-  // white, below even the large-text 3:1 minimum.
-  color: var(--color-accent-text);
+  h1 {
+    margin: 12px 0 0;
+    font-size: 1.75rem;
+    letter-spacing: -0.02em;
+  }
 
-  &.muted {
+  p {
+    margin: 0 0 12px;
     color: var(--color-text-muted);
   }
 }
 
-.streak-count {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--color-text);
-  margin: 0;
-}
+.first-run-icon {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 22px;
+  background: var(--gradient-hero);
+  color: #fff;
 
-.streak-message {
-  color: var(--color-text-muted);
-  margin: 0;
-}
-
-// --- Level progress card ---
-
-.level-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
-
-  &:last-child {
-    margin-bottom: 0;
+  mat-icon {
+    font-size: 36px;
+    width: 36px;
+    height: 36px;
   }
-}
-
-.level-label {
-  flex: none;
-  width: 24px;
-  font-weight: 600;
-  color: var(--color-text);
-}
-
-mat-progress-bar {
-  flex: 1;
-}
-
-.level-text {
-  flex: none;
-  font-size: 0.875rem;
-  color: var(--color-text-muted);
-  white-space: nowrap;
-}
-
-// --- Recent activity card ---
-
-.activity-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.activity-list li {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--color-border);
-
-  &:last-child {
-    border-bottom: none;
-  }
-}
-
-.activity-date {
-  flex: 1;
-  color: var(--color-text);
-}
-
-.activity-score {
-  color: var(--color-text-muted);
-  font-size: 0.875rem;
-}
-
-.muted {
-  color: var(--color-text-muted);
 }
 
 // --- Loading skeleton ---
 
 .skeleton {
-  height: 140px;
+  border-radius: $radius;
   background: var(--color-border);
   animation: skeleton-pulse 1.4s ease-in-out infinite;
+
+  &--hero {
+    height: 240px;
+  }
+
+  &--tile {
+    height: 132px;
+  }
+
+  &--card {
+    height: 280px;
+  }
 }
 
 @keyframes skeleton-pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
   50% {
     opacity: 0.5;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  app-home-hero,
+  .panels > *,
   .skeleton {
     animation: none;
+  }
+
+  .skeleton {
     opacity: 0.7;
   }
 }

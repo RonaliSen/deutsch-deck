@@ -1,0 +1,39 @@
+<section class="card" aria-labelledby="activity-title">
+  <header class="card-head">
+    <h2 id="activity-title">Recent activity</h2>
+  </header>
+
+  @defer (on viewport) {
+    @if (rows().length === 0) {
+      <div class="empty">
+        <mat-icon>history</mat-icon>
+        <p>No sessions yet.</p>
+      </div>
+    } @else {
+      <!-- The leading &ngsp; keeps "Flashcards Sa., 14. Nov. 17 / 20 85%" spaced for
+           screen readers (Angular strips whitespace between tags); it's
+           invisible because these spans are flex items. -->
+      <ul class="activity-list">
+        @for (session of rows(); track session.id) {
+          <li class="activity" [class]="session.type === 'study' ? 'tone-orange' : 'tone-blue'">
+            <span class="chip">
+              <mat-icon>{{ session.type === 'study' ? 'school' : 'quiz' }}</mat-icon>
+            </span>
+            <span class="activity-main">
+              <span class="activity-title">
+                {{ session.type === 'study' ? 'Flashcards' : 'Article quiz' }}
+              </span>
+              <span class="activity-meta" lang="de">
+                &ngsp;{{ session.date | date: 'EEE, d. MMM' : undefined : 'de' }}
+              </span>
+            </span>
+            <span class="activity-meta">&ngsp;{{ session.correct }} / {{ session.total }}</span>
+            <span class="pill" [class]="'pill--' + session.tone">&ngsp;{{ session.percent }}%</span>
+          </li>
+        }
+      </ul>
+    }
+  } @placeholder {
+    <p class="muted">Loading…</p>
+  }
+</section>

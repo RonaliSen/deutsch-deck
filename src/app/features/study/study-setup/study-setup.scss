@@ -1,0 +1,175 @@
+@use '@angular/material' as mat;
+@use '../../../../styles/ui' as *;
+
+:host {
+  display: grid;
+  // minmax(0, …): one long word can't widen the column past the screen.
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+}
+
+// --- Banner content (the banner itself is app-page-banner) ---
+
+.banner-sub {
+  margin: 0;
+  max-width: 48ch;
+  font-size: 0.9375rem;
+}
+
+.flip-art {
+  position: relative;
+  width: 260px;
+  height: 160px;
+}
+
+.mini-card {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  width: 140px;
+  height: 84px;
+  border-radius: 16px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 1.25rem;
+  font-weight: 700;
+  box-shadow: 0 16px 32px -12px rgb(0 0 0 / 45%);
+
+  &--back {
+    right: 0;
+    top: 0;
+    transform: rotate(8deg);
+    color: var(--color-text-muted);
+    font-size: 1rem;
+  }
+
+  &--front {
+    left: 0;
+    bottom: 0;
+    transform: rotate(-6deg);
+
+    // Same article-colored top strip as the real flashcards.
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0 0 auto;
+      height: 5px;
+      background: var(--color-der);
+    }
+  }
+}
+
+.flip-icon {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #fff;
+  color: #9f1239;
+  font-size: 24px;
+  box-shadow: 0 6px 16px rgb(0 0 0 / 25%);
+}
+
+// --- Cards ---
+
+.card {
+  @include panel-card;
+}
+
+.setup-grid {
+  display: grid;
+  // minmax(0, …): one long word can't widen the column past the screen.
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
+}
+
+.filters {
+  display: grid;
+  gap: 20px;
+  align-content: start;
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+}
+
+.field-label {
+  @include field-label;
+}
+
+mat-chip-listbox {
+  @include level-chips;
+}
+
+.topic-field {
+  width: 100%;
+  --mat-form-field-outlined-container-shape: 12px;
+  --mat-form-field-outlined-outline-color: var(--color-border);
+  // Matches the chip text size (--mat-chip-label-text-size: 14px) - the
+  // select trigger otherwise defaults to M3's body-large (16px).
+  --mat-select-trigger-text-size: var(--mat-chip-label-text-size, 14px);
+
+  // Material's form-field density scale is a fixed container-height table:
+  // 0 -> 56px ... -4 -> 40px. -4 lands on the 40px target, matching the
+  // chips. mat.define-theme() builds a theme object purely to carry that
+  // density value; @include-ing it inside .topic-field scopes the CSS
+  // variables to this selector only - the app-wide theme is untouched.
+  @include mat.form-field-density(
+    mat.define-theme(
+      (
+        density: (
+          scale: -4,
+        ),
+      )
+    )
+  );
+}
+
+.summary {
+  @include summary-panel;
+}
+
+.counts {
+  @include stat-pairs;
+}
+
+.count--session dd {
+  color: var(--color-accent-text);
+}
+
+.limit-note {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.start {
+  @include gradient-button;
+  margin-top: 4px;
+}
+
+.notice {
+  @include notice;
+}
+
+// --- Nothing due anywhere ---
+
+.empty-state {
+  @include empty-state;
+}
+
+// --- Wider layouts (container = the Study page, see study.scss) ---
+
+@container study (min-width: 720px) {
+  .setup-grid {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: 32px;
+  }
+}

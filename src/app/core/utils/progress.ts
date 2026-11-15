@@ -1,3 +1,4 @@
+import { Session } from '../models/session.model';
 import { Level, Word } from '../models/word.model';
 import { isMastered } from './leitner';
 
@@ -58,7 +59,11 @@ export function levelProgress(words: readonly Word[]): Record<Level, LevelStats>
     const levelWords = words.filter((word) => word.level === level);
     const mastered = levelWords.filter(isMastered).length;
     const total = levelWords.length;
-    result[level] = { mastered, total, percent: total === 0 ? 0 : Math.round((mastered / total) * 100) };
+    result[level] = {
+      mastered,
+      total,
+      percent: total === 0 ? 0 : Math.round((mastered / total) * 100),
+    };
   }
 
   return result;
@@ -69,4 +74,19 @@ export function greetingFor(date: Date): string {
   if (hour < 12) return 'Guten Morgen!';
   if (hour < 18) return 'Guten Tag!';
   return 'Guten Abend!';
+}
+
+/**
+ * Correct answers as a whole-number percent of all answers across the given
+ * sessions - weighted by answer count, not a plain average of per-session
+ * percents, so a 2-card session can't outweigh a 20-card one. Null when
+ * there's nothing to measure yet (no sessions, or only empty ones).
+ */
+export function accuracyPercent(
+  sessions: readonly Pick<Session, 'total' | 'correct'>[],
+): number | null {
+  const total = sessions.reduce((sum, s) => sum + s.total, 0);
+  if (total === 0) return null;
+  const correct = sessions.reduce((sum, s) => sum + s.correct, 0);
+  return Math.round((correct / total) * 100);
 }

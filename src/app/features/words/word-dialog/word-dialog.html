@@ -1,21 +1,42 @@
-<div class="header-row">
-  <h2 mat-dialog-title>{{ isEdit ? 'Edit word' : 'Add word' }}</h2>
+<header class="dialog-head">
+  <span class="head-icon"
+    ><mat-icon>{{ isEdit ? 'edit' : 'add' }}</mat-icon></span
+  >
+  <div class="head-text">
+    <h2 mat-dialog-title>{{ isEdit ? 'Edit word' : 'Add word' }}</h2>
+    <p class="head-sub">
+      {{
+        isEdit
+          ? 'Changes keep the word’s review progress.'
+          : 'New words start in box 1, due for review right away.'
+      }}
+    </p>
+  </div>
   <button mat-icon-button type="button" aria-label="Close" mat-dialog-close>
     <mat-icon>close</mat-icon>
   </button>
-</div>
+</header>
 
 <form [formGroup]="form" (ngSubmit)="save()">
   <mat-dialog-content class="fields">
-    <mat-form-field appearance="outline" subscriptSizing="dynamic">
-      <mat-label>Article (nouns only)</mat-label>
-      <mat-select formControlName="gender">
-        <mat-option value="">None</mat-option>
+    <div class="field field--wide">
+      <span class="field-label" id="word-article-label">
+        Article <span class="optional">nouns only</span>
+      </span>
+      <mat-button-toggle-group
+        formControlName="gender"
+        class="segmented"
+        aria-labelledby="word-article-label"
+        hideSingleSelectionIndicator
+      >
+        <mat-button-toggle value="">None</mat-button-toggle>
         @for (gender of genders; track gender) {
-          <mat-option [value]="gender" lang="de">{{ gender }}</mat-option>
+          <mat-button-toggle [value]="gender" [class]="'seg-' + gender" lang="de">
+            {{ gender }}
+          </mat-button-toggle>
         }
-      </mat-select>
-    </mat-form-field>
+      </mat-button-toggle-group>
+    </div>
 
     <mat-form-field appearance="outline" subscriptSizing="dynamic">
       <mat-label>German</mat-label>
@@ -30,7 +51,7 @@
       <input matInput formControlName="plural" lang="de" />
     </mat-form-field>
 
-    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="field--wide">
       <mat-label>English</mat-label>
       <input matInput formControlName="english" required />
       @if (form.controls.english.invalid && form.controls.english.touched) {
@@ -38,21 +59,34 @@
       }
     </mat-form-field>
 
-    <mat-form-field appearance="outline" subscriptSizing="dynamic">
-      <mat-label>Level</mat-label>
-      <mat-select formControlName="level" required>
+    <div class="field">
+      <span class="field-label" id="word-level-label">Level</span>
+      <mat-button-toggle-group
+        formControlName="level"
+        class="segmented"
+        aria-labelledby="word-level-label"
+        hideSingleSelectionIndicator
+      >
         @for (level of levels; track level) {
-          <mat-option [value]="level">{{ level }}</mat-option>
+          <mat-button-toggle [value]="level" [class]="'seg-' + level">{{
+            level
+          }}</mat-button-toggle>
         }
-      </mat-select>
+      </mat-button-toggle-group>
       @if (form.controls.level.invalid && form.controls.level.touched) {
-        <mat-error>Level is required</mat-error>
+        <p class="error">Level is required</p>
       }
-    </mat-form-field>
+    </div>
 
-    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="topic-field">
       <mat-label>Topic</mat-label>
-      <input matInput formControlName="topic" required [matAutocomplete]="topicAuto" (input)="onTopicInput($event)" />
+      <input
+        matInput
+        formControlName="topic"
+        required
+        [matAutocomplete]="topicAuto"
+        (input)="onTopicInput($event)"
+      />
       <mat-autocomplete #topicAuto="matAutocomplete">
         @for (topic of filteredTopics(); track topic) {
           <mat-option [value]="topic">{{ topic }}</mat-option>
@@ -68,6 +102,9 @@
 
   <mat-dialog-actions align="end">
     <button mat-button type="button" (click)="cancel()">Cancel</button>
-    <button mat-flat-button type="submit">Save</button>
+    <button mat-flat-button type="submit" class="save">
+      <mat-icon>check</mat-icon>
+      Save
+    </button>
   </mat-dialog-actions>
 </form>

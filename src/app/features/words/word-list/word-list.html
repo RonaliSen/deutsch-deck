@@ -1,0 +1,57 @@
+@if (words().length === 0) {
+  <section class="empty-state">
+    <span class="empty-icon"><mat-icon>search_off</mat-icon></span>
+    <p class="empty-title">No words found</p>
+    <p class="empty-hint">Try a different spelling, or another level.</p>
+  </section>
+} @else {
+  <ul class="word-list" [class.word-list--fab]="fabSpace()">
+    @for (word of words(); track word.id) {
+      <li class="word-row" [class]="'gender-' + (word.gender ?? 'none')">
+        <div class="word-main">
+          <span class="german-line">
+            @if (word.gender) {
+              <app-article-badge [gender]="word.gender" />
+            }
+            <!-- Leading &ngsp;: a word gap for screen readers, invisible in the flex row. -->
+            <span class="german" lang="de">&ngsp;{{ word.german }}</span>
+          </span>
+          <span class="english">
+            {{ word.english }}
+            @if (word.plural) {
+              <span class="plural"
+                >· Pl. <span lang="de">{{ word.plural }}</span></span
+              >
+            }
+          </span>
+        </div>
+
+        <div class="word-meta">
+          <span class="pill level" [class]="'level--' + word.level">{{ word.level }}</span>
+          <span class="pill topic" [title]="word.topic">{{ word.topic }}</span>
+        </div>
+
+        <div class="word-actions">
+          <button
+            mat-icon-button
+            type="button"
+            class="edit"
+            [attr.aria-label]="'Edit ' + word.german"
+            (click)="edit.emit(word)"
+          >
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            type="button"
+            class="delete"
+            [attr.aria-label]="'Delete ' + word.german"
+            (click)="remove.emit(word)"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </li>
+    }
+  </ul>
+}

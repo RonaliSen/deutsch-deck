@@ -64,7 +64,10 @@ beforeEach(async () => {
   await deleteTestDatabase();
 });
 
-async function setupStore(words: Word[], sessions: Session[]): Promise<InstanceType<typeof ProgressStore>> {
+async function setupStore(
+  words: Word[],
+  sessions: Session[],
+): Promise<InstanceType<typeof ProgressStore>> {
   const db = new DeutschDeckDb();
   await db.words.bulkAdd(words);
   await db.sessions.bulkAdd(sessions);
@@ -83,7 +86,11 @@ async function setupStore(words: Word[], sessions: Session[]): Promise<InstanceT
   // re-renders automatically once liveQuery resolves, whenever that is.
   store.totalWords();
   store.lastSessions();
-  await waitUntil(() => store.totalWords() === words.length && store.lastSessions().length === Math.min(sessions.length, 5));
+  await waitUntil(
+    () =>
+      store.totalWords() === words.length &&
+      store.lastSessions().length === Math.min(sessions.length, 5),
+  );
   return store;
 }
 
@@ -139,7 +146,16 @@ describe('ProgressStore', () => {
     const now = Date.now();
     const sessions = Array.from({ length: 8 }, (_, i) => session(i + 1, { date: now - i * 1_000 }));
     // Insert out of chronological order to prove the store sorts, not just passes through.
-    const shuffled = [sessions[3], sessions[0], sessions[7], sessions[1], sessions[6], sessions[2], sessions[5], sessions[4]];
+    const shuffled = [
+      sessions[3],
+      sessions[0],
+      sessions[7],
+      sessions[1],
+      sessions[6],
+      sessions[2],
+      sessions[5],
+      sessions[4],
+    ];
 
     const store = await setupStore([], shuffled);
 

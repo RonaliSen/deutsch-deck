@@ -1,0 +1,48 @@
+// Home-only additions on top of the shared UI kit (styles/_ui.scss), which
+// this file re-exports so Home components need a single @use.
+
+@forward '../../../styles/ui';
+@use '../../../styles/ui' as *;
+
+/**
+ * A dashboard panel: the host fills its grid cell, .card is the visible
+ * surface, .card-head holds the h2 (+ optional .card-meta).
+ */
+@mixin card {
+  :host {
+    display: block;
+  }
+
+  .card {
+    @include surface;
+    box-sizing: border-box;
+    height: 100%;
+    padding: 24px 20px;
+  }
+
+  .card-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 20px;
+
+    h2 {
+      margin: 0;
+      font-size: 1.0625rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+  }
+
+  .card-meta {
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+  }
+
+  @container dash (min-width: 560px) {
+    .card {
+      padding: 24px;
+    }
+  }
+}

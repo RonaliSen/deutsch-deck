@@ -1,0 +1,42 @@
+@use '../../../styles/ui' as *;
+
+:host {
+  display: block;
+}
+
+.banner {
+  @include gradient-banner;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  padding: 28px 24px;
+
+  h1 {
+    @include display-heading;
+  }
+}
+
+.banner-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.eyebrow {
+  @include eyebrow;
+}
+
+.banner-art {
+  display: none;
+  flex: none;
+}
+
+// Unnamed: responds to whichever page container this banner sits in.
+@container (min-width: 560px) {
+  .banner {
+    padding: 40px;
+  }
+
+  .banner-art:not(:empty) {
+    display: block;
+  }
+}

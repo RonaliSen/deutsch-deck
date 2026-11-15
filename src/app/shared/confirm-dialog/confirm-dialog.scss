@@ -1,0 +1,42 @@
+@use '../../../styles/ui' as *;
+
+:host {
+  display: block;
+  padding-top: 8px;
+}
+
+.icon {
+  @include tone('red');
+  @include tint;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin: 16px 24px 0;
+  border-radius: 16px;
+}
+
+h2[mat-dialog-title] {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+mat-dialog-content {
+  color: var(--color-text-muted);
+}
+
+mat-dialog-actions {
+  gap: 8px;
+  padding: 8px 24px 24px;
+}
+
+// M3 Material ignores color="warn" on flat buttons, so the danger action
+// is styled directly. White on --color-die-text is >= 6.5:1 in light mode;
+// in dark mode that token is a light red, so the text flips to the dark
+// surface color (>= 5.5:1) instead.
+.danger {
+  --mat-button-filled-container-color: var(--color-die-text);
+  --mat-button-filled-label-text-color: var(--color-surface);
+  --mat-button-filled-state-layer-color: var(--color-surface);
+  padding-inline: 20px;
+}

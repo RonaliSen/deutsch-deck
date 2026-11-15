@@ -12,14 +12,23 @@ import { injectIsDesktop } from '../../core/layout/breakpoints';
 import { Word } from '../../core/models/word.model';
 import { LevelFilter, WordsStore } from '../../core/state/words.store';
 import { ConfirmDialog } from '../../shared/confirm-dialog/confirm-dialog';
-import { ArticleBadge } from '../../shared/article-badge/article-badge';
+import { PageBanner } from '../../shared/page-banner/page-banner';
 import { WordDialog } from './word-dialog/word-dialog';
+import { WordList } from './word-list/word-list';
 
 const LEVEL_CHIPS: readonly LevelFilter[] = ['all', 'A1', 'A2', 'B1'];
 
 @Component({
   selector: 'app-words',
-  imports: [MatButtonModule, MatChipsModule, MatFormFieldModule, MatIconModule, MatInputModule, ArticleBadge],
+  imports: [
+    MatButtonModule,
+    MatChipsModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    PageBanner,
+    WordList,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './words.html',
   styleUrl: './words.scss',
@@ -59,8 +68,8 @@ export class Words {
         width: this.isDesktop() ? '560px' : '100vw',
         maxWidth: this.isDesktop() ? '90vw' : '100vw',
         ariaModal: true,
-        panelClass: 'word-dialog-panel',
-        backdropClass: 'word-dialog-backdrop',
+        panelClass: 'app-dialog-panel',
+        backdropClass: 'app-dialog-backdrop',
       })
       .afterClosed()
       .subscribe((result) => {
@@ -77,8 +86,8 @@ export class Words {
         width: this.isDesktop() ? '560px' : '100vw',
         maxWidth: this.isDesktop() ? '90vw' : '100vw',
         ariaModal: true,
-        panelClass: 'word-dialog-panel',
-        backdropClass: 'word-dialog-backdrop',
+        panelClass: 'app-dialog-panel',
+        backdropClass: 'app-dialog-backdrop',
       })
       .afterClosed()
       .subscribe((result) => {
@@ -95,9 +104,13 @@ export class Words {
           title: 'Delete word?',
           message: `"${word.german}" (${word.english}) will be removed.`,
           confirmText: 'Delete',
+          icon: 'delete',
         },
-        width: '360px',
+        width: '400px',
+        maxWidth: '90vw',
         ariaModal: true,
+        panelClass: 'app-dialog-panel',
+        backdropClass: 'app-dialog-backdrop',
       })
       .afterClosed()
       .subscribe((confirmed) => {

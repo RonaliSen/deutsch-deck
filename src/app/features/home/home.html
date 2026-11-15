@@ -1,72 +1,43 @@
 @if (wordsStore.loading()) {
-  <div class="card-grid" aria-hidden="true">
-    @for (i of [1, 2, 3, 4]; track i) {
-      <div class="card skeleton"></div>
-    }
+  <div class="dashboard" aria-hidden="true">
+    <div class="skeleton skeleton--hero"></div>
+    <div class="tiles">
+      @for (i of [1, 2, 3, 4]; track i) {
+        <div class="skeleton skeleton--tile"></div>
+      }
+    </div>
+    <div class="panels">
+      <div class="skeleton skeleton--card"></div>
+      <div class="skeleton skeleton--card"></div>
+    </div>
   </div>
 } @else if (progress.totalWords() === 0) {
-  <div class="first-run">
+  <section class="first-run">
+    <span class="first-run-icon"><mat-icon>style</mat-icon></span>
     <h1>Welcome to DeutschDeck!</h1>
     <p>Add your first words to get started.</p>
     <a mat-flat-button routerLink="/words">Go to Words</a>
-  </div>
+  </section>
 } @else {
-  <header class="greeting">
-    <h1 lang="de">{{ greeting }}</h1>
-    <p class="date" lang="de">{{ today | date: 'EEEE, d. MMMM' : undefined : 'de' }}</p>
-  </header>
+  <div class="dashboard">
+    <app-home-hero [greeting]="greeting" [today]="today" [dueCount]="progress.dueTodayCount()" />
 
-  <div class="card-grid">
-    <section class="card hero-card">
-      @if (progress.dueTodayCount() > 0) {
-        <p class="hero-count">{{ progress.dueTodayCount() }} word{{ progress.dueTodayCount() === 1 ? '' : 's' }} due today</p>
-        <a mat-flat-button class="hero-cta" routerLink="/study">Start studying</a>
-      } @else {
-        <p class="hero-count">All caught up!</p>
-        <a mat-stroked-button routerLink="/quiz">Practise articles</a>
-      }
-    </section>
+    <app-stat-tiles
+      [streak]="progress.streak()"
+      [mastered]="progress.masteredWords()"
+      [total]="progress.totalWords()"
+      [due]="progress.dueTodayCount()"
+      [accuracy]="progress.recentAccuracy()"
+      [sessionCount]="progress.lastSessions().length"
+    />
 
-    <section class="card streak-card">
-      @if (progress.streak() > 0) {
-        <mat-icon class="flame">local_fire_department</mat-icon>
-        <p class="streak-count">{{ progress.streak() }}-day streak</p>
-      } @else {
-        <mat-icon class="flame muted">local_fire_department</mat-icon>
-        <p class="streak-message">Study today to start a streak</p>
-      }
-    </section>
-
-    <section class="card level-card">
-      <h2>Level progress</h2>
-      @for (level of levels; track level) {
-        <div class="level-row">
-          <span class="level-label">{{ level }}</span>
-          <mat-progress-bar mode="determinate" [value]="progress.levelProgress()[level].percent" [attr.aria-label]="level + ' progress'" />
-          <span class="level-text">{{ progress.levelProgress()[level].mastered }} / {{ progress.levelProgress()[level].total }} mastered</span>
-        </div>
-      }
-    </section>
-
-    <section class="card activity-card">
-      <h2>Recent activity</h2>
-      @defer (on viewport) {
-        @if (progress.lastSessions().length === 0) {
-          <p class="muted">No sessions yet.</p>
-        } @else {
-          <ul class="activity-list">
-            @for (session of progress.lastSessions(); track session.id) {
-              <li>
-                <mat-icon>{{ session.type === 'study' ? 'school' : 'quiz' }}</mat-icon>
-                <span class="activity-date" lang="de">{{ session.date | date: 'd. MMM' : undefined : 'de' }}</span>
-                <span class="activity-score">{{ session.correct }} / {{ session.total }}</span>
-              </li>
-            }
-          </ul>
-        }
-      } @placeholder {
-        <p class="muted">Loading…</p>
-      }
-    </section>
+    <div class="panels">
+      <app-level-progress
+        [progress]="progress.levelProgress()"
+        [mastered]="progress.masteredWords()"
+        [total]="progress.totalWords()"
+      />
+      <app-recent-activity [sessions]="progress.lastSessions()" />
+    </div>
   </div>
 }

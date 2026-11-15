@@ -1,0 +1,22 @@
+<div class="feedback" [class]="correct() ? 'tone-green' : 'tone-red'">
+  <span class="feedback-icon"
+    ><mat-icon>{{ correct() ? 'check' : 'close' }}</mat-icon></span
+  >
+  <div class="feedback-text">
+    <strong>{{ correct() ? 'Correct!' : 'Not quite' }}</strong>
+    <span class="feedback-detail">
+      It's
+      <app-article-badge [gender]="word().gender!" />
+      <span class="feedback-word" lang="de">{{ word().german }}</span>
+      @if (word().plural) {
+        <span class="plural"
+          >· Plural: <span lang="de">{{ word().plural }}</span></span
+        >
+      }
+    </span>
+  </div>
+  <button mat-flat-button type="button" class="next" (click)="next.emit()">
+    {{ last() ? 'See results' : 'Next question' }}
+    <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+  </button>
+</div>

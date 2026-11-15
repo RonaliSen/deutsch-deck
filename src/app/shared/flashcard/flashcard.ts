@@ -8,12 +8,20 @@ import {
   output,
   viewChild,
 } from '@angular/core';
-import { Word } from '../../core/models/word.model';
+import { MatIconModule } from '@angular/material/icon';
+import { Gender, Word } from '../../core/models/word.model';
 import { ArticleBadge } from '../article-badge/article-badge';
+
+const TONE_BY_GENDER: Record<Gender | 'none', string> = {
+  der: 'blue',
+  die: 'red',
+  das: 'green',
+  none: 'orange',
+};
 
 @Component({
   selector: 'app-flashcard',
-  imports: [ArticleBadge],
+  imports: [ArticleBadge, MatIconModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './flashcard.html',
   styleUrl: './flashcard.scss',
@@ -34,6 +42,10 @@ export class Flashcard {
     // keep working across cards without reaching for the mouse.
     afterNextRender(() => this.cardButton()?.nativeElement.focus());
   }
+
+  // Card color follows the article (der blue / die red / das green), the
+  // same color coding as the article badges - nouns without one use orange.
+  protected readonly tone = computed(() => TONE_BY_GENDER[this.word().gender ?? 'none']);
 
   // The button's own name always identifies the card; a separate aria-live
   // region (below) is what makes screen readers announce the flip itself.

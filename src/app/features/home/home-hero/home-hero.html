@@ -1,0 +1,39 @@
+<section class="hero" aria-labelledby="greeting">
+  <div class="hero-text">
+    <p class="hero-date" lang="de">
+      <mat-icon>calendar_today</mat-icon>
+      {{ today() | date: 'EEEE, d. MMMM' : undefined : 'de' }}
+    </p>
+    <h1 id="greeting" lang="de">{{ greeting() }}</h1>
+
+    @if (dueCount() > 0) {
+      <p class="hero-count">{{ dueCount() }} word{{ dueCount() === 1 ? '' : 's' }} due today</p>
+      <p class="hero-sub">A short review now keeps them from slipping away.</p>
+      <div class="hero-actions">
+        <a mat-flat-button routerLink="/study">
+          Start studying
+          <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+        </a>
+        <a mat-stroked-button routerLink="/quiz">Practise articles</a>
+      </div>
+    } @else {
+      <p class="hero-count">All caught up!</p>
+      <p class="hero-sub">
+        Nothing is due right now — sharpen your <span lang="de">der, die, das</span> instead.
+      </p>
+      <div class="hero-actions">
+        <a mat-flat-button routerLink="/quiz">
+          Practise articles
+          <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+        </a>
+      </div>
+    }
+  </div>
+
+  <!-- Purely decorative flashcard stack; hidden on narrow widths. -->
+  <div class="hero-art" aria-hidden="true" lang="de">
+    <div class="deck-card tone-green"><b>das</b> Haus</div>
+    <div class="deck-card tone-red"><b>die</b> Katze</div>
+    <div class="deck-card tone-blue"><b>der</b> Hund<small>the dog</small></div>
+  </div>
+</section>

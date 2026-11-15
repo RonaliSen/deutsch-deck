@@ -1,0 +1,83 @@
+<app-page-banner heading="Quiz" headingId="quiz-title" eyebrow="Article trainer" eyebrowIcon="quiz">
+  <p class="banner-sub">
+    See a German noun and pick its article: <span lang="de">der</span>,
+    <span lang="de">die</span> or <span lang="de">das</span>. It's practice only — your study
+    schedule isn't affected.
+  </p>
+
+  <!-- Decorative: the three answer tiles. -->
+  <div bannerArt class="article-art" lang="de">
+    <span class="tile tile--der">der</span>
+    <span class="tile tile--die">die</span>
+    <span class="tile tile--das">das</span>
+  </div>
+</app-page-banner>
+
+@if (globalNounCount() < minNouns()) {
+  <section class="card empty-state">
+    <span class="empty-icon"><mat-icon>playlist_add</mat-icon></span>
+    <p class="empty-title">
+      You need at least {{ minNouns() }} nouns with an article to quiz. Add some words first.
+    </p>
+    <a mat-stroked-button routerLink="/words">Go to Words</a>
+  </section>
+} @else {
+  <section class="card" aria-labelledby="quiz-setup-title">
+    <h2 id="quiz-setup-title">Set up your quiz</h2>
+
+    <div class="setup-grid">
+      <div class="filters">
+        <div class="field">
+          <span class="field-label" id="quiz-level-label">Level</span>
+          <mat-chip-listbox aria-labelledby="quiz-level-label">
+            @for (chip of levelChips; track chip) {
+              <mat-chip-option [selected]="level() === chip" (click)="levelChange.emit(chip)">
+                {{ chip === 'all' ? 'All' : chip }}
+              </mat-chip-option>
+            }
+          </mat-chip-listbox>
+        </div>
+
+        <p class="tip">
+          <mat-icon>keyboard</mat-icon>
+          <span>
+            Tip: answer with <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> and press <kbd>Enter</kbd> for
+            the next question.
+          </span>
+        </p>
+      </div>
+
+      <div class="summary">
+        <dl class="counts">
+          <div>
+            <dt>Nouns available</dt>
+            <dd>{{ nounCount() }}</dd>
+          </div>
+          <div class="count--questions">
+            <dt>Questions</dt>
+            <dd>{{ questionCount() }}</dd>
+          </div>
+        </dl>
+        <p class="note">Picked at random from the nouns at this level.</p>
+
+        <button
+          mat-flat-button
+          type="button"
+          class="start"
+          [disabled]="nounCount() < minNouns()"
+          (click)="start.emit()"
+        >
+          <mat-icon>play_arrow</mat-icon>
+          Start quiz
+        </button>
+
+        @if (nounCount() < minNouns()) {
+          <p class="notice">
+            <mat-icon>info</mat-icon>
+            Not enough nouns at this level (need at least {{ minNouns() }}).
+          </p>
+        }
+      </div>
+    </div>
+  </section>
+}

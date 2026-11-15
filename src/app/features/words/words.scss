@@ -1,102 +1,153 @@
-.words-header {
+@use '@angular/material' as mat;
+@use '../../../styles/ui' as *;
+
+// The page is its own query container (see the shared UI kit's unnamed
+// @container rules) - sized by the content column, not the viewport.
+:host {
+  display: grid;
+  // minmax(0, …): one long word can't widen the column past the screen.
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+  container: words / inline-size;
+}
+
+// --- Banner content (the banner itself is app-page-banner) ---
+
+.banner-sub {
+  margin: 0;
+  max-width: 48ch;
+  font-size: 0.9375rem;
+}
+
+.add {
+  margin-top: 20px;
+  padding-inline: 24px;
+}
+
+.rows-art {
+  display: grid;
+  gap: 8px;
+  width: 220px;
+  transform: rotate(-4deg);
+}
+
+.art-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-weight: 700;
+  box-shadow: 0 12px 24px -12px rgb(0 0 0 / 45%);
+
+  b {
+    @include tint;
+    padding: 1px 8px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+  }
+
+  &--der {
+    @include tone('blue');
+  }
+
+  &--die {
+    @include tone('red');
+    margin-left: 24px;
+  }
+
+  &--das {
+    @include tone('green');
+    margin-left: 8px;
+  }
+}
+
+// --- Search + filter ---
+
+.toolbar {
+  @include surface;
+  display: grid;
   gap: 16px;
-  margin-bottom: 24px;
-}
-
-.words-heading {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-}
-
-.count {
-  color: var(--color-text-muted);
-}
-
-.controls {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 24px;
+  padding: 16px;
 }
 
 .search-field {
-  flex: 1 1 240px;
+  width: 100%;
+  --mat-form-field-outlined-container-shape: 14px;
+  --mat-form-field-outlined-outline-color: var(--color-border);
+
+  // -2 -> 48px, matching the chips' visual weight. Scoped to this field
+  // only, like the Study topic select.
+  @include mat.form-field-density(
+    mat.define-theme(
+      (
+        density: (
+          scale: -2,
+        ),
+      )
+    )
+  );
 }
 
-.empty-state {
-  color: var(--color-text-muted);
-  padding: 32px 0;
-  text-align: center;
+.level-filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
 }
 
-.word-list {
-  list-style: none;
+.field-label {
+  @include field-label;
+}
+
+mat-chip-listbox {
+  @include level-chips;
+}
+
+.count {
   margin: 0;
-  padding: 0;
-  // Clears the mobile add-fab (56px tall, sitting 80px above the viewport
-  // bottom - see .add-fab below) plus a 16px gap, so the last rows' edit/
-  // delete buttons don't scroll underneath it. Harmless extra whitespace
-  // on desktop, where there's no fab.
-  padding-bottom: 152px;
-}
-
-.word-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--color-border);
-}
-
-.word-main {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
-}
-
-.word-text {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-.german {
-  font-weight: 600;
-  color: var(--color-text);
-}
-
-.english {
   font-size: 0.875rem;
   color: var(--color-text-muted);
+
+  strong {
+    color: var(--color-text);
+    font-variant-numeric: tabular-nums;
+  }
 }
 
-.word-actions {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  flex: none;
-}
-
-.level-badge {
-  padding: 4px 8px;
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  font-size: 0.75rem;
-  color: var(--color-text-muted);
-  margin-right: 4px;
-}
+// --- Mobile add button ---
 
 .add-fab {
+  --mat-fab-container-color: transparent;
+  --mat-fab-foreground-color: #fff;
+  --mat-fab-state-layer-color: #fff;
+  --mat-fab-ripple-color: rgb(255 255 255 / 20%);
   position: fixed;
   right: 16px;
   // Clears the shell's mobile bottom tab bar (measured ~64px tall), plus a
   // 16px gap - both terms are on the approved spacing scale.
   bottom: calc(64px + 16px);
+  background-image: var(--gradient-hero);
+  box-shadow: 0 12px 24px -8px rgb(190 18 60 / 60%);
+}
+
+// --- Wider layouts ---
+
+@container words (min-width: 560px) {
+  .toolbar {
+    padding: 20px;
+  }
+}
+
+@container words (min-width: 720px) {
+  .toolbar {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+  }
+
+  .count {
+    grid-column: 1 / -1;
+  }
 }

@@ -1,0 +1,197 @@
+@use '../../../../styles/ui' as *;
+
+:host {
+  display: block;
+}
+
+// --- Word list ---
+
+.word-list {
+  @include bare-list;
+  @include surface;
+  padding: 6px;
+
+  // Mobile only: clears the add-fab (56px tall, 80px above the viewport
+  // bottom - see .add-fab) plus a 16px gap, so the last rows' edit/delete
+  // buttons can scroll out from underneath it.
+  &--fab {
+    margin-bottom: 152px;
+  }
+}
+
+.word-row {
+  position: relative;
+  // Narrow: level/topic pills sit under the English, so the text gets the
+  // full width next to the buttons. Wide: one line (see @container below).
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'main actions'
+    'meta actions';
+  align-items: center;
+  gap: 6px 8px;
+  padding: 12px 8px 12px 20px;
+  border-radius: 14px;
+
+  // Inset divider between rows (a border would follow the rounded corners).
+  & + &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 16px;
+    right: 16px;
+    height: 1px;
+    background: var(--color-border);
+  }
+
+  &:hover {
+    background: var(--color-bg);
+  }
+
+  // Article color strip - same color coding as the badges and flashcards.
+  &::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 14px;
+    bottom: 14px;
+    width: 4px;
+    border-radius: 2px;
+    background: var(--strip, var(--color-border));
+  }
+
+  &.gender-der {
+    --strip: var(--color-der);
+  }
+
+  &.gender-die {
+    --strip: var(--color-die);
+  }
+
+  &.gender-das {
+    --strip: var(--color-das);
+  }
+}
+
+.word-main {
+  grid-area: main;
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.german-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+}
+
+.german {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  min-width: 0;
+}
+
+.english {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.word-meta {
+  grid-area: meta;
+  display: flex;
+  gap: 6px;
+}
+
+.pill {
+  // Fixed widths keep the level pills in one straight column even though
+  // topic names vary in length.
+  box-sizing: border-box;
+  min-width: 40px;
+  text-align: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.level {
+  @include tint;
+
+  &--A1 {
+    @include tone('green');
+  }
+
+  &--A2 {
+    @include tone('blue');
+  }
+
+  &--B1 {
+    @include tone('violet');
+  }
+}
+
+// Topic is secondary - only where there's room for it.
+.topic {
+  display: none;
+  width: 84px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.word-actions {
+  grid-area: actions;
+  display: flex;
+
+  button {
+    --mat-icon-button-icon-color: var(--color-text-muted);
+  }
+
+  .edit:hover {
+    --mat-icon-button-icon-color: var(--color-accent-text);
+    --mat-icon-button-state-layer-color: var(--color-accent);
+  }
+
+  .delete:hover {
+    --mat-icon-button-icon-color: var(--color-die-text);
+    --mat-icon-button-state-layer-color: var(--color-die);
+  }
+}
+
+// --- No results ---
+
+.empty-state {
+  @include surface;
+  @include empty-state;
+
+  .empty-title {
+    margin: 0;
+  }
+}
+
+.empty-hint {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+@container words (min-width: 480px) {
+  .word-row {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-areas: 'main meta actions';
+    gap: 12px;
+  }
+}
+
+@container words (min-width: 560px) {
+  .topic {
+    display: inline-block;
+  }
+}

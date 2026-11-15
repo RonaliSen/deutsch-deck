@@ -1,0 +1,83 @@
+@use '../dashboard' as *;
+
+@include card;
+@include tone-classes('orange', 'blue');
+
+.activity-list {
+  @include bare-list;
+  display: grid;
+  gap: 2px;
+  // Rows get their own padding for the hover highlight; pull them back
+  // out so their content still lines up with the card heading.
+  margin: -8px -10px;
+}
+
+.activity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: 14px;
+
+  &:hover {
+    background: var(--color-bg);
+  }
+}
+
+.chip {
+  @include chip;
+}
+
+.activity-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.activity-title {
+  font-weight: 600;
+}
+
+.activity-meta {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.pill {
+  @include tint;
+  min-width: 44px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+
+  &--great {
+    @include tone('green');
+  }
+
+  &--ok {
+    @include tone('amber');
+  }
+
+  &--low {
+    @include tone('red');
+  }
+}
+
+.empty {
+  display: grid;
+  justify-items: center;
+  padding: 24px 0;
+
+  p {
+    margin: 8px 0 0;
+  }
+}
+
+.empty,
+.muted {
+  color: var(--color-text-muted);
+}

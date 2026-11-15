@@ -50,7 +50,9 @@ describe('Study', () => {
     fixture.detectChanges();
     const cardBeforeAnswer = fixture.nativeElement.querySelector('.flashcard');
     expect(cardBeforeAnswer.classList.contains('flipped')).toBe(true);
-    expect(fixture.nativeElement.querySelector('.flashcard-back .english').textContent).toContain(first.english);
+    expect(fixture.nativeElement.querySelector('.flashcard-back .english').textContent).toContain(
+      first.english,
+    );
 
     session.answer(true);
     fixture.detectChanges();
@@ -60,8 +62,14 @@ describe('Study', () => {
     // so there's nothing to animate and nothing stale to leak.
     expect(cardAfterAnswer).not.toBe(cardBeforeAnswer);
     expect(cardAfterAnswer.classList.contains('flipped')).toBe(false);
-    expect(fixture.nativeElement.querySelector('.flashcard-front .german').textContent).toContain(second.german);
-    expect(fixture.nativeElement.querySelector('.flashcard-back .english').textContent).toContain(second.english);
-    expect(fixture.nativeElement.querySelector('.flashcard-back .english').textContent).not.toContain(first.english);
+    expect(fixture.nativeElement.querySelector('.flashcard-front .german').textContent).toContain(
+      second.german,
+    );
+    expect(fixture.nativeElement.querySelector('.flashcard-back .english').textContent).toContain(
+      second.english,
+    );
+    expect(
+      fixture.nativeElement.querySelector('.flashcard-back .english').textContent,
+    ).not.toContain(first.english);
   });
 });
